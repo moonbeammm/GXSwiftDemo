@@ -1,0 +1,11 @@
+{
+  "commitish" : "bl-1.0.0-rc.7",
+  "iOS" : [
+    {
+      "hash" : "d11a318c3c492bff9c0c105a1ff6836487cc008e34ed72918a160a1c96da396f",
+      "name" : "Carbon",
+      "linking" : "dynamic",
+      "swiftToolchainVersion" : "5.9.2 (swiftlang-5.9.2.2.56 clang-1500.1.0.2.5)"
+    }
+  ]
+}

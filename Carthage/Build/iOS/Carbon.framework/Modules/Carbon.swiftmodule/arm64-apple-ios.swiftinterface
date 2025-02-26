@@ -1,0 +1,794 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.9.2 (swiftlang-5.9.2.2.56 clang-1500.1.0.2.5)
+// swift-module-flags: -target arm64-apple-ios10.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name Carbon
+// swift-module-flags-ignorable: -enable-bare-slash-regex
+import DifferenceKit
+import Foundation
+import ObjectiveC
+import Swift
+import SwiftUI
+import UIKit
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+public struct Group<Element> {
+  @usableFromInline
+  internal var elements: [Element]
+  public init()
+}
+extension Carbon.Group : Carbon.CellsBuildable where Element == Carbon.CellNode {
+  public init<C>(@Carbon.CellsBuilder cells: () -> C) where C : Carbon.CellsBuildable
+  public init<Data, C>(of data: Data, cell: (Data.Element) -> C) where Data : Swift.Sequence, C : Carbon.CellsBuildable
+  public func buildCells() -> [Carbon.CellNode]
+}
+extension Carbon.Group : Carbon.SectionsBuildable where Element == Carbon.Section {
+  public init<S>(@Carbon.SectionsBuilder sections: () -> S) where S : Carbon.SectionsBuildable
+  public init<Data, S>(of data: Data, section: (Data.Element) -> S) where Data : Swift.Sequence, S : Carbon.SectionsBuildable
+  public func buildSections() -> [Carbon.Section]
+}
+public struct IdentifiedComponentWrapper<ID, Wrapped> : Carbon.ComponentWrapping, Carbon.IdentifiableComponent where ID : Swift.Hashable, Wrapped : Carbon.Component {
+  public var id: ID
+  public var wrapped: Wrapped
+  public init(id: ID, wrapped: Wrapped)
+  public typealias Content = Wrapped.Content
+}
+extension Carbon.Component {
+  public func identified<ID>(by id: ID) -> Carbon.IdentifiedComponentWrapper<ID, Self> where ID : Swift.Hashable
+  public func identified<ID>(by keyPath: Swift.KeyPath<Self, ID>) -> Carbon.IdentifiedComponentWrapper<ID, Self> where ID : Swift.Hashable
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor(unsafe) open class UITableViewComponentHeaderFooterView : UIKit.UITableViewHeaderFooterView, Carbon.ComponentRenderable {
+  @available(*, unavailable)
+  @_Concurrency.MainActor(unsafe) @objc required dynamic public init?(coder aDecoder: Foundation.NSCoder)
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public init(reuseIdentifier: Swift.String?)
+  @objc deinit
+}
+public protocol SectionsBuildable {
+  func buildSections() -> [Carbon.Section]
+}
+extension Swift.Optional : Carbon.SectionsBuildable where Wrapped : Carbon.SectionsBuildable {
+  @inlinable public func buildSections() -> [Carbon.Section] {
+        return self?.buildSections() ?? []
+    }
+}
+public struct Section {
+  public var id: Swift.AnyHashable
+  public var header: Carbon.ViewNode?
+  public var cells: [Carbon.CellNode]
+  public var footer: Carbon.ViewNode?
+  public init<I, C>(id: I, header: Carbon.ViewNode? = nil, cells: C, footer: Carbon.ViewNode? = nil) where I : Swift.Hashable, C : Swift.Collection, C.Element == Carbon.CellNode
+  public init<I, C>(id: I, header: Carbon.ViewNode? = nil, cells: C, footer: Carbon.ViewNode? = nil) where I : Swift.Hashable, C : Swift.Collection, C.Element == Carbon.CellNode?
+  public init<I>(id: I, header: Carbon.ViewNode? = nil, footer: Carbon.ViewNode? = nil) where I : Swift.Hashable
+  public init<I, C>(id: I, @Carbon.CellsBuilder cells: () -> C) where I : Swift.Hashable, C : Carbon.CellsBuildable
+  public init<I, H, F, C>(id: I, header: H?, footer: F?, @Carbon.CellsBuilder cells: () -> C) where I : Swift.Hashable, H : Carbon.Component, F : Carbon.Component, C : Carbon.CellsBuildable
+  public init<I, H, F>(id: I, header: H?, footer: F?) where I : Swift.Hashable, H : Carbon.Component, F : Carbon.Component
+  public init<I, H>(id: I, header: H?, @Carbon.CellsBuilder cells: () -> any Carbon.CellsBuildable) where I : Swift.Hashable, H : Carbon.Component
+  public init<I, F, C>(id: I, footer: F?, @Carbon.CellsBuilder cells: () -> C) where I : Swift.Hashable, F : Carbon.Component, C : Carbon.CellsBuildable
+  public init<I, H>(id: I, header: H?) where I : Swift.Hashable, H : Carbon.Component
+  public init<I, F>(id: I, footer: F?) where I : Swift.Hashable, F : Carbon.Component
+}
+extension Carbon.Section : Carbon.SectionsBuildable {
+  public func buildSections() -> [Carbon.Section]
+}
+extension Carbon.Section : DifferenceKit.DifferentiableSection {
+  @inlinable public var differenceIdentifier: Swift.AnyHashable {
+    get {
+        return id
+    }
+  }
+  @inlinable public var elements: [Carbon.CellNode] {
+    get {
+        return cells
+    }
+  }
+  @inlinable public func isContentEqual(to source: Carbon.Section) -> Swift.Bool {
+        return header.isContentEqual(to: source.header) && footer.isContentEqual(to: source.footer)
+    }
+  @inlinable public init<C>(source: Carbon.Section, elements cells: C) where C : Swift.Collection, C.Element == Carbon.CellNode {
+        self.init(id: source.id, header: source.header, cells: cells, footer: source.footer)
+    }
+  public typealias Collection = [Carbon.CellNode]
+  public typealias DifferenceIdentifier = Swift.AnyHashable
+}
+@_functionBuilder public struct CellsBuilder : Carbon.CellsBuildable {
+  @usableFromInline
+  internal var cellNodes: [Carbon.CellNode]
+  @inlinable public func buildCells() -> [Carbon.CellNode] {
+        cellNodes
+    }
+  @inlinable public static func buildBlock() -> Carbon.CellsBuilder {
+        CellsBuilder()
+    }
+  @inlinable public static func buildBlock<C>(_ c: C) -> Carbon.CellsBuilder where C : Carbon.CellsBuildable {
+        CellsBuilder(c)
+    }
+  @inlinable public static func buildBlock<C0, C1>(_ c0: C0, _ c1: C1) -> Carbon.CellsBuilder where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable {
+        CellsBuilder(c0, c1)
+    }
+  @inlinable public static func buildBlock<C0, C1, C2>(_ c0: C0, _ c1: C1, _ c2: C2) -> Carbon.CellsBuilder where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable {
+        CellsBuilder(c0, c1, c2)
+    }
+  @inlinable public static func buildBlock<C0, C1, C2, C3>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3) -> Carbon.CellsBuilder where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable {
+        CellsBuilder(c0, c1, c2, c3)
+    }
+  @inlinable public static func buildBlock<C0, C1, C2, C3, C4>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3, _ c4: C4) -> Carbon.CellsBuilder where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable, C4 : Carbon.CellsBuildable {
+        CellsBuilder(c0, c1, c2, c3, c4)
+    }
+  @inlinable public static func buildBlock<C0, C1, C2, C3, C4, C5>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3, _ c4: C4, _ c5: C5) -> Carbon.CellsBuilder where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable, C4 : Carbon.CellsBuildable, C5 : Carbon.CellsBuildable {
+        CellsBuilder(c0, c1, c2, c3, c4, c5)
+    }
+  @inlinable public static func buildBlock<C0, C1, C2, C3, C4, C5, C6>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3, _ c4: C4, _ c5: C5, _ c6: C6) -> Carbon.CellsBuilder where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable, C4 : Carbon.CellsBuildable, C5 : Carbon.CellsBuildable, C6 : Carbon.CellsBuildable {
+        CellsBuilder(c0, c1, c2, c3, c4, c5, c6)
+    }
+  @inlinable public static func buildBlock<C0, C1, C2, C3, C4, C5, C6, C7>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3, _ c4: C4, _ c5: C5, _ c6: C6, _ c7: C7) -> Carbon.CellsBuilder where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable, C4 : Carbon.CellsBuildable, C5 : Carbon.CellsBuildable, C6 : Carbon.CellsBuildable, C7 : Carbon.CellsBuildable {
+        CellsBuilder(c0, c1, c2, c3, c4, c5, c6, c7)
+    }
+  @inlinable public static func buildBlock<C0, C1, C2, C3, C4, C5, C6, C7, C8>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3, _ c4: C4, _ c5: C5, _ c6: C6, _ c7: C7, _ c8: C8) -> Carbon.CellsBuilder where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable, C4 : Carbon.CellsBuildable, C5 : Carbon.CellsBuildable, C6 : Carbon.CellsBuildable, C7 : Carbon.CellsBuildable, C8 : Carbon.CellsBuildable {
+        CellsBuilder(c0, c1, c2, c3, c4, c5, c6, c7, c8)
+    }
+  @inlinable public static func buildBlock<C0, C1, C2, C3, C4, C5, C6, C7, C8, C9>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3, _ c4: C4, _ c5: C5, _ c6: C6, _ c7: C7, _ c8: C8, _ c9: C9) -> Carbon.CellsBuilder where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable, C4 : Carbon.CellsBuildable, C5 : Carbon.CellsBuildable, C6 : Carbon.CellsBuildable, C7 : Carbon.CellsBuildable, C8 : Carbon.CellsBuildable, C9 : Carbon.CellsBuildable {
+        CellsBuilder(c0, c1, c2, c3, c4, c5, c6, c7, c8, c9)
+    }
+  @inlinable public static func buildIf<C>(_ c: C?) -> C? where C : Carbon.CellsBuildable {
+        c
+    }
+  @inlinable public static func buildEither<C>(first: C) -> C where C : Carbon.CellsBuildable {
+        first
+    }
+  @inlinable public static func buildEither<C>(second: C) -> C where C : Carbon.CellsBuildable {
+        second
+    }
+  @inlinable public static func buildArray<C>(_ components: [C]) -> Carbon.CellsBuilder where C : Carbon.CellsBuildable {
+        CellsBuilder(components)
+    }
+}
+extension Carbon.CellsBuilder {
+  @usableFromInline
+  internal init()
+  @usableFromInline
+  internal init<C>(_ c: C) where C : Carbon.CellsBuildable
+  @usableFromInline
+  internal init<C0, C1>(_ c0: C0, _ c1: C1) where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable
+  @usableFromInline
+  internal init<C0, C1, C2>(_ c0: C0, _ c1: C1, _ c2: C2) where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable
+  @usableFromInline
+  internal init<C0, C1, C2, C3>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3) where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable
+  @usableFromInline
+  internal init<C0, C1, C2, C3, C4>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3, _ c4: C4) where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable, C4 : Carbon.CellsBuildable
+  @usableFromInline
+  internal init<C0, C1, C2, C3, C4, C5>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3, _ c4: C4, _ c5: C5) where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable, C4 : Carbon.CellsBuildable, C5 : Carbon.CellsBuildable
+  @usableFromInline
+  internal init<C0, C1, C2, C3, C4, C5, C6>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3, _ c4: C4, _ c5: C5, _ c6: C6) where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable, C4 : Carbon.CellsBuildable, C5 : Carbon.CellsBuildable, C6 : Carbon.CellsBuildable
+  @usableFromInline
+  internal init<C0, C1, C2, C3, C4, C5, C6, C7>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3, _ c4: C4, _ c5: C5, _ c6: C6, _ c7: C7) where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable, C4 : Carbon.CellsBuildable, C5 : Carbon.CellsBuildable, C6 : Carbon.CellsBuildable, C7 : Carbon.CellsBuildable
+  @usableFromInline
+  internal init<C0, C1, C2, C3, C4, C5, C6, C7, C8>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3, _ c4: C4, _ c5: C5, _ c6: C6, _ c7: C7, _ c8: C8) where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable, C4 : Carbon.CellsBuildable, C5 : Carbon.CellsBuildable, C6 : Carbon.CellsBuildable, C7 : Carbon.CellsBuildable, C8 : Carbon.CellsBuildable
+  @usableFromInline
+  internal init<C0, C1, C2, C3, C4, C5, C6, C7, C8, C9>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3, _ c4: C4, _ c5: C5, _ c6: C6, _ c7: C7, _ c8: C8, _ c9: C9) where C0 : Carbon.CellsBuildable, C1 : Carbon.CellsBuildable, C2 : Carbon.CellsBuildable, C3 : Carbon.CellsBuildable, C4 : Carbon.CellsBuildable, C5 : Carbon.CellsBuildable, C6 : Carbon.CellsBuildable, C7 : Carbon.CellsBuildable, C8 : Carbon.CellsBuildable, C9 : Carbon.CellsBuildable
+  @usableFromInline
+  internal init<C>(_ cs: [C]) where C : Carbon.CellsBuildable
+}
+open class UICollectionViewReloadDataUpdater<Adapter> : Carbon.Updater where Adapter : Carbon.UICollectionViewAdapter {
+  public init()
+  open func prepare(target: UIKit.UICollectionView, adapter: Adapter)
+  open func performUpdates(target: UIKit.UICollectionView, adapter: Adapter, data: [Carbon.Section])
+  public typealias Target = UIKit.UICollectionView
+  @objc deinit
+}
+public protocol CellsBuildable {
+  func buildCells() -> [Carbon.CellNode]
+}
+extension Swift.Optional : Carbon.CellsBuildable where Wrapped : Carbon.CellsBuildable {
+  @inlinable public func buildCells() -> [Carbon.CellNode] {
+        return self?.buildCells() ?? []
+    }
+}
+public protocol Component {
+  associatedtype Content
+  func renderContent() -> Self.Content
+  func render(in content: Self.Content)
+  var reuseIdentifier: Swift.String { get }
+  func referenceSize(in bounds: CoreFoundation.CGRect) -> CoreFoundation.CGSize?
+  func shouldContentUpdate(with next: Self) -> Swift.Bool
+  func shouldRender(next: Self, in content: Self.Content) -> Swift.Bool
+  func layout(content: Self.Content, in container: UIKit.UIView)
+  func intrinsicContentSize(for content: Self.Content) -> CoreFoundation.CGSize
+  func contentWillDisplay(_ content: Self.Content)
+  func contentDidEndDisplay(_ content: Self.Content)
+}
+extension Carbon.Component {
+  @inlinable public var reuseIdentifier: Swift.String {
+    get {
+        return String(reflecting: Self.self)
+    }
+  }
+  @inlinable public func referenceSize(in bounds: CoreFoundation.CGRect) -> CoreFoundation.CGSize? {
+        return nil
+    }
+  @inlinable public func shouldContentUpdate(with next: Self) -> Swift.Bool {
+        return false
+    }
+  @inlinable public func shouldRender(next: Self, in content: Self.Content) -> Swift.Bool {
+        return true
+    }
+  @inlinable public func contentWillDisplay(_ content: Self.Content) {}
+  @inlinable public func contentDidEndDisplay(_ content: Self.Content) {}
+}
+extension Carbon.Component where Self.Content : UIKit.UIView {
+  public func layout(content: Self.Content, in container: UIKit.UIView)
+  public func intrinsicContentSize(for content: Self.Content) -> CoreFoundation.CGSize
+}
+extension Carbon.Component where Self.Content : UIKit.UIViewController {
+  public func layout(content: Self.Content, in container: UIKit.UIView)
+  public func intrinsicContentSize(for content: Self.Content) -> CoreFoundation.CGSize
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor(unsafe) open class UICollectionComponentReusableView : UIKit.UICollectionReusableView, Carbon.ComponentRenderable {
+  @available(*, unavailable)
+  @_Concurrency.MainActor(unsafe) @objc required dynamic public init?(coder aDecoder: Foundation.NSCoder)
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @objc deinit
+}
+@_functionBuilder public struct SectionsBuilder : Carbon.SectionsBuildable {
+  @usableFromInline
+  internal var sections: [Carbon.Section]
+  public func buildSections() -> [Carbon.Section]
+  @inlinable public static func buildBlock() -> Carbon.SectionsBuilder {
+        SectionsBuilder()
+    }
+  @inlinable public static func buildBlock<S>(_ c: S) -> Carbon.SectionsBuilder where S : Carbon.SectionsBuildable {
+        SectionsBuilder(c)
+    }
+  @inlinable public static func buildBlock<S0, S1>(_ s0: S0, _ s1: S1) -> Carbon.SectionsBuilder where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable {
+        SectionsBuilder(s0, s1)
+    }
+  @inlinable public static func buildBlock<S0, S1, S2>(_ s0: S0, _ s1: S1, _ s2: S2) -> Carbon.SectionsBuilder where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable {
+        SectionsBuilder(s0, s1, s2)
+    }
+  @inlinable public static func buildBlock<S0, S1, S2, S3>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3) -> Carbon.SectionsBuilder where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable {
+        SectionsBuilder(s0, s1, s2, s3)
+    }
+  @inlinable public static func buildBlock<S0, S1, S2, S3, S4>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4) -> Carbon.SectionsBuilder where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable, S4 : Carbon.SectionsBuildable {
+        SectionsBuilder(s0, s1, s2, s3, s4)
+    }
+  @inlinable public static func buildBlock<S0, S1, S2, S3, S4, S5>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5) -> Carbon.SectionsBuilder where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable, S4 : Carbon.SectionsBuildable, S5 : Carbon.SectionsBuildable {
+        SectionsBuilder(s0, s1, s2, s3, s4, s5)
+    }
+  @inlinable public static func buildBlock<S0, S1, S2, S3, S4, S5, S6>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5, _ s6: S6) -> Carbon.SectionsBuilder where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable, S4 : Carbon.SectionsBuildable, S5 : Carbon.SectionsBuildable, S6 : Carbon.SectionsBuildable {
+        SectionsBuilder(s0, s1, s2, s3, s4, s5, s6)
+    }
+  @inlinable public static func buildBlock<S0, S1, S2, S3, S4, S5, S6, S7>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5, _ s6: S6, _ s7: S7) -> Carbon.SectionsBuilder where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable, S4 : Carbon.SectionsBuildable, S5 : Carbon.SectionsBuildable, S6 : Carbon.SectionsBuildable, S7 : Carbon.SectionsBuildable {
+        SectionsBuilder(s0, s1, s2, s3, s4, s5, s6, s7)
+    }
+  @inlinable public static func buildBlock<S0, S1, S2, S3, S4, S5, S6, S7, S8>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5, _ s6: S6, _ s7: S7, _ s8: S8) -> Carbon.SectionsBuilder where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable, S4 : Carbon.SectionsBuildable, S5 : Carbon.SectionsBuildable, S6 : Carbon.SectionsBuildable, S7 : Carbon.SectionsBuildable, S8 : Carbon.SectionsBuildable {
+        SectionsBuilder(s0, s1, s2, s3, s4, s5, s6, s7, s8)
+    }
+  @inlinable public static func buildBlock<S0, S1, S2, S3, S4, S5, S6, S7, S8, S9>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5, _ s6: S6, _ s7: S7, _ s8: S8, _ s9: S9) -> Carbon.SectionsBuilder where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable, S4 : Carbon.SectionsBuildable, S5 : Carbon.SectionsBuildable, S6 : Carbon.SectionsBuildable, S7 : Carbon.SectionsBuildable, S8 : Carbon.SectionsBuildable, S9 : Carbon.SectionsBuildable {
+        SectionsBuilder(s0, s1, s2, s3, s4, s5, s6, s7, s8, s9)
+    }
+  @inlinable public static func buildIf<S>(_ s: S?) -> S? where S : Carbon.SectionsBuildable {
+        s
+    }
+  @inlinable public static func buildEither<S>(first: S) -> S where S : Carbon.SectionsBuildable {
+        first
+    }
+  @inlinable public static func buildEither<S>(second: S) -> S where S : Carbon.SectionsBuildable {
+        second
+    }
+  @inlinable public static func buildArray<S>(_ components: [S]) -> Carbon.SectionsBuilder where S : Carbon.SectionsBuildable {
+        SectionsBuilder(components)
+    }
+}
+extension Carbon.SectionsBuilder {
+  @usableFromInline
+  internal init()
+  @usableFromInline
+  internal init<S>(_ s: S) where S : Carbon.SectionsBuildable
+  @usableFromInline
+  internal init<S0, S1>(_ s0: S0, _ s1: S1) where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable
+  @usableFromInline
+  internal init<S0, S1, S2>(_ s0: S0, _ s1: S1, _ s2: S2) where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable
+  @usableFromInline
+  internal init<S0, S1, S2, S3>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3) where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable
+  @usableFromInline
+  internal init<S0, S1, S2, S3, S4>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4) where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable, S4 : Carbon.SectionsBuildable
+  @usableFromInline
+  internal init<S0, S1, S2, S3, S4, S5>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5) where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable, S4 : Carbon.SectionsBuildable, S5 : Carbon.SectionsBuildable
+  @usableFromInline
+  internal init<S0, S1, S2, S3, S4, S5, S6>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5, _ s6: S6) where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable, S4 : Carbon.SectionsBuildable, S5 : Carbon.SectionsBuildable, S6 : Carbon.SectionsBuildable
+  @usableFromInline
+  internal init<S0, S1, S2, S3, S4, S5, S6, S7>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5, _ s6: S6, _ s7: S7) where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable, S4 : Carbon.SectionsBuildable, S5 : Carbon.SectionsBuildable, S6 : Carbon.SectionsBuildable, S7 : Carbon.SectionsBuildable
+  @usableFromInline
+  internal init<S0, S1, S2, S3, S4, S5, S6, S7, S8>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5, _ s6: S6, _ s7: S7, _ s8: S8) where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable, S4 : Carbon.SectionsBuildable, S5 : Carbon.SectionsBuildable, S6 : Carbon.SectionsBuildable, S7 : Carbon.SectionsBuildable, S8 : Carbon.SectionsBuildable
+  @usableFromInline
+  internal init<S0, S1, S2, S3, S4, S5, S6, S7, S8, S9>(_ s0: S0, _ s1: S1, _ s2: S2, _ s3: S3, _ s4: S4, _ s5: S5, _ s6: S6, _ s7: S7, _ s8: S8, _ s9: S9) where S0 : Carbon.SectionsBuildable, S1 : Carbon.SectionsBuildable, S2 : Carbon.SectionsBuildable, S3 : Carbon.SectionsBuildable, S4 : Carbon.SectionsBuildable, S5 : Carbon.SectionsBuildable, S6 : Carbon.SectionsBuildable, S7 : Carbon.SectionsBuildable, S8 : Carbon.SectionsBuildable, S9 : Carbon.SectionsBuildable
+  @usableFromInline
+  internal init<S>(_ ss: [S]) where S : Carbon.SectionsBuildable
+}
+@objc open class UICollectionViewAdapter : ObjectiveC.NSObject, Carbon.Adapter {
+  public var data: [Carbon.Section]
+  open var didSelect: ((Carbon.UICollectionViewAdapter.SelectionContext) -> Swift.Void)?
+  public init(data: [Carbon.Section] = [])
+  open func cellRegistration(collectionView: UIKit.UICollectionView, indexPath: Foundation.IndexPath, node: Carbon.CellNode) -> Carbon.UICollectionViewAdapter.CellRegistration
+  open func supplementaryViewRegistration(forElementKind kind: Swift.String, collectionView: UIKit.UICollectionView, indexPath: Foundation.IndexPath, node: Carbon.ViewNode) -> Carbon.UICollectionViewAdapter.ViewRegistration
+  open func supplementaryViewNode(forElementKind kind: Swift.String, collectionView: UIKit.UICollectionView, at indexPath: Foundation.IndexPath) -> Carbon.ViewNode?
+  public func registeredSupplementaryViewKinds(for collectionView: UIKit.UICollectionView) -> [Swift.String]
+  @objc deinit
+}
+extension Carbon.UICollectionViewAdapter {
+  public struct CellRegistration {
+    public var `class`: any (UIKit.UICollectionViewCell & Carbon.ComponentRenderable).Type
+    public var nib: UIKit.UINib?
+    public init(class: any (UIKit.UICollectionViewCell & Carbon.ComponentRenderable).Type, nib: UIKit.UINib? = nil)
+  }
+  public struct ViewRegistration {
+    public var `class`: any (UIKit.UICollectionReusableView & Carbon.ComponentRenderable).Type
+    public var nib: UIKit.UINib?
+    public init(class: any (UIKit.UICollectionReusableView & Carbon.ComponentRenderable).Type, nib: UIKit.UINib? = nil)
+  }
+  public struct SelectionContext {
+    public var collectionView: UIKit.UICollectionView
+    public var node: Carbon.CellNode
+    public var indexPath: Foundation.IndexPath
+  }
+}
+extension Carbon.UICollectionViewAdapter : UIKit.UICollectionViewDataSource {
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func numberOfSections(in collectionView: UIKit.UICollectionView) -> Swift.Int
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func collectionView(_ collectionView: UIKit.UICollectionView, numberOfItemsInSection section: Swift.Int) -> Swift.Int
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func collectionView(_ collectionView: UIKit.UICollectionView, cellForItemAt indexPath: Foundation.IndexPath) -> UIKit.UICollectionViewCell
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func collectionView(_ collectionView: UIKit.UICollectionView, viewForSupplementaryElementOfKind kind: Swift.String, at indexPath: Foundation.IndexPath) -> UIKit.UICollectionReusableView
+}
+extension Carbon.UICollectionViewAdapter : UIKit.UICollectionViewDelegate {
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func collectionView(_ collectionView: UIKit.UICollectionView, didSelectItemAt indexPath: Foundation.IndexPath)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func collectionView(_ collectionView: UIKit.UICollectionView, willDisplay cell: UIKit.UICollectionViewCell, forItemAt indexPath: Foundation.IndexPath)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func collectionView(_ collectionView: UIKit.UICollectionView, didEndDisplaying cell: UIKit.UICollectionViewCell, forItemAt indexPath: Foundation.IndexPath)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func collectionView(_ collectionView: UIKit.UICollectionView, willDisplaySupplementaryView view: UIKit.UICollectionReusableView, forElementKind elementKind: Swift.String, at indexPath: Foundation.IndexPath)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func collectionView(_ collectionView: UIKit.UICollectionView, didEndDisplayingSupplementaryView view: UIKit.UICollectionReusableView, forElementOfKind elementKind: Swift.String, at indexPath: Foundation.IndexPath)
+}
+extension Carbon.UICollectionViewAdapter : UIKit.UIScrollViewDelegate {
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidScroll(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidZoom(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewWillBeginDragging(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewWillEndDragging(_ scrollView: UIKit.UIScrollView, withVelocity velocity: CoreFoundation.CGPoint, targetContentOffset: Swift.UnsafeMutablePointer<CoreFoundation.CGPoint>)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidEndDragging(_ scrollView: UIKit.UIScrollView, willDecelerate decelerate: Swift.Bool)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewWillBeginDecelerating(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidEndDecelerating(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidEndScrollingAnimation(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewWillBeginZooming(_ scrollView: UIKit.UIScrollView, with view: UIKit.UIView?)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidEndZooming(_ scrollView: UIKit.UIScrollView, with view: UIKit.UIView?, atScale scale: CoreFoundation.CGFloat)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidScrollToTop(_ scrollView: UIKit.UIScrollView)
+  @available(iOS 11.0, *)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidChangeAdjustedContentInset(_ scrollView: UIKit.UIScrollView)
+}
+@dynamicMemberLookup public protocol ComponentWrapping : Carbon.Component {
+  associatedtype Wrapped : Carbon.Component
+  var wrapped: Self.Wrapped { get }
+}
+extension Carbon.ComponentWrapping {
+  @inlinable public subscript<T>(dynamicMember keyPath: Swift.KeyPath<Self.Wrapped, T>) -> T {
+    get {
+        wrapped[keyPath: keyPath]
+    }
+  }
+}
+extension Carbon.ComponentWrapping {
+  @inlinable public var reuseIdentifier: Swift.String {
+    get {
+        return wrapped.reuseIdentifier
+    }
+  }
+  @inlinable public func renderContent() -> Self.Wrapped.Content {
+        return wrapped.renderContent()
+    }
+  @inlinable public func render(in content: Self.Wrapped.Content) {
+        wrapped.render(in: content)
+    }
+  @inlinable public func referenceSize(in bounds: CoreFoundation.CGRect) -> CoreFoundation.CGSize? {
+        return wrapped.referenceSize(in: bounds)
+    }
+  @inlinable public func shouldContentUpdate(with next: Self) -> Swift.Bool {
+        return wrapped.shouldContentUpdate(with: next.wrapped)
+    }
+  @inlinable public func shouldRender(next: Self, in content: Self.Wrapped.Content) -> Swift.Bool {
+        return wrapped.shouldRender(next: next.wrapped, in: content)
+    }
+  @inlinable public func layout(content: Self.Wrapped.Content, in container: UIKit.UIView) {
+        wrapped.layout(content: content, in: container)
+    }
+  public func intrinsicContentSize(for content: Self.Wrapped.Content) -> CoreFoundation.CGSize
+  @inlinable public func contentWillDisplay(_ content: Self.Wrapped.Content) {
+        wrapped.contentWillDisplay(content)
+    }
+  @inlinable public func contentDidEndDisplay(_ content: Self.Wrapped.Content) {
+        wrapped.contentDidEndDisplay(content)
+    }
+}
+public protocol Adapter : AnyObject {
+  var data: [Carbon.Section] { get set }
+}
+extension Carbon.Adapter {
+  public func cellNodes(in section: Swift.Int) -> [Carbon.CellNode]
+  public func cellNode(at indexPath: Foundation.IndexPath) -> Carbon.CellNode
+  public func headerNode(in section: Swift.Int) -> Carbon.ViewNode?
+  public func footerNode(in section: Swift.Int) -> Carbon.ViewNode?
+}
+@objc open class UITableViewAdapter : ObjectiveC.NSObject, Carbon.Adapter {
+  public var data: [Carbon.Section]
+  open var didSelect: ((Carbon.UITableViewAdapter.SelectionContext) -> Swift.Void)?
+  public init(data: [Carbon.Section] = [])
+  open func cellRegistration(tableView: UIKit.UITableView, indexPath: Foundation.IndexPath, node: Carbon.CellNode) -> Carbon.UITableViewAdapter.CellRegistration
+  open func headerViewRegistration(tableView: UIKit.UITableView, section: Swift.Int, node: Carbon.ViewNode) -> Carbon.UITableViewAdapter.ViewRegistration
+  open func footerViewRegistration(tableView: UIKit.UITableView, section: Swift.Int, node: Carbon.ViewNode) -> Carbon.UITableViewAdapter.ViewRegistration
+  @objc deinit
+}
+extension Carbon.UITableViewAdapter {
+  public struct CellRegistration {
+    public var `class`: any (UIKit.UITableViewCell & Carbon.ComponentRenderable).Type
+    public var nib: UIKit.UINib?
+    public init(class: any (UIKit.UITableViewCell & Carbon.ComponentRenderable).Type, nib: UIKit.UINib? = nil)
+  }
+  public struct ViewRegistration {
+    public var `class`: any (UIKit.UITableViewHeaderFooterView & Carbon.ComponentRenderable).Type
+    public var nib: UIKit.UINib?
+    public init(class: any (UIKit.UITableViewHeaderFooterView & Carbon.ComponentRenderable).Type, nib: UIKit.UINib? = nil)
+  }
+  public struct SelectionContext {
+    public var tableView: UIKit.UITableView
+    public var node: Carbon.CellNode
+    public var indexPath: Foundation.IndexPath
+  }
+}
+extension Carbon.UITableViewAdapter : UIKit.UITableViewDataSource {
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func numberOfSections(in tableView: UIKit.UITableView) -> Swift.Int
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, numberOfRowsInSection section: Swift.Int) -> Swift.Int
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, cellForRowAt indexPath: Foundation.IndexPath) -> UIKit.UITableViewCell
+}
+extension Carbon.UITableViewAdapter : UIKit.UITableViewDelegate {
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, viewForHeaderInSection section: Swift.Int) -> UIKit.UIView?
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, viewForFooterInSection section: Swift.Int) -> UIKit.UIView?
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, heightForRowAt indexPath: Foundation.IndexPath) -> CoreFoundation.CGFloat
+  @_Concurrency.MainActor(unsafe) @objc dynamic public func tableView(_ tableView: UIKit.UITableView, estimatedHeightForRowAt indexPath: Foundation.IndexPath) -> CoreFoundation.CGFloat
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, heightForHeaderInSection section: Swift.Int) -> CoreFoundation.CGFloat
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, estimatedHeightForHeaderInSection section: Swift.Int) -> CoreFoundation.CGFloat
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, heightForFooterInSection section: Swift.Int) -> CoreFoundation.CGFloat
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, estimatedHeightForFooterInSection section: Swift.Int) -> CoreFoundation.CGFloat
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, didSelectRowAt indexPath: Foundation.IndexPath)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, willDisplay cell: UIKit.UITableViewCell, forRowAt indexPath: Foundation.IndexPath)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, didEndDisplaying cell: UIKit.UITableViewCell, forRowAt indexPath: Foundation.IndexPath)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, willDisplayHeaderView view: UIKit.UIView, forSection section: Swift.Int)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, didEndDisplayingHeaderView view: UIKit.UIView, forSection section: Swift.Int)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, willDisplayFooterView view: UIKit.UIView, forSection section: Swift.Int)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func tableView(_ tableView: UIKit.UITableView, didEndDisplayingFooterView view: UIKit.UIView, forSection section: Swift.Int)
+}
+extension Carbon.UITableViewAdapter : UIKit.UIScrollViewDelegate {
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidScroll(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidZoom(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewWillBeginDragging(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewWillEndDragging(_ scrollView: UIKit.UIScrollView, withVelocity velocity: CoreFoundation.CGPoint, targetContentOffset: Swift.UnsafeMutablePointer<CoreFoundation.CGPoint>)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidEndDragging(_ scrollView: UIKit.UIScrollView, willDecelerate decelerate: Swift.Bool)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewWillBeginDecelerating(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidEndDecelerating(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidEndScrollingAnimation(_ scrollView: UIKit.UIScrollView)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewWillBeginZooming(_ scrollView: UIKit.UIScrollView, with view: UIKit.UIView?)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidEndZooming(_ scrollView: UIKit.UIScrollView, with view: UIKit.UIView?, atScale scale: CoreFoundation.CGFloat)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidScrollToTop(_ scrollView: UIKit.UIScrollView)
+  @available(iOS 11.0, *)
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func scrollViewDidChangeAdjustedContentInset(_ scrollView: UIKit.UIScrollView)
+}
+public struct ViewNode {
+  public var component: Carbon.AnyComponent
+  public init<C>(_ component: C) where C : Carbon.Component
+  public func component<T>(as _: T.Type) -> T?
+}
+extension Carbon.ViewNode : DifferenceKit.ContentEquatable {
+  @inlinable public func isContentEqual(to source: Carbon.ViewNode) -> Swift.Bool {
+        return !source.component.shouldContentUpdate(with: component)
+    }
+}
+extension Carbon.ViewNode : Swift.CustomDebugStringConvertible {
+  @inlinable public var debugDescription: Swift.String {
+    get {
+        return "ViewNode(component: \(component))"
+    }
+  }
+}
+public protocol IdentifiableComponent : Carbon.CellsBuildable, Carbon.Component {
+  associatedtype ID : Swift.Hashable
+  var id: Self.ID { get }
+}
+extension Carbon.IdentifiableComponent {
+  public func buildCells() -> [Carbon.CellNode]
+}
+extension Carbon.IdentifiableComponent where Self : Swift.Hashable {
+  public var id: Self {
+    get
+  }
+}
+@available(iOS 13.0, *)
+extension Carbon.Component where Self : SwiftUI.View {
+  public var body: some SwiftUI.View {
+    get
+  }
+}
+open class UITableViewReloadDataUpdater<Adapter> : Carbon.Updater where Adapter : Carbon.UITableViewAdapter {
+  public init()
+  open func prepare(target: UIKit.UITableView, adapter: Adapter)
+  open func performUpdates(target: UIKit.UITableView, adapter: Adapter, data: [Carbon.Section])
+  public typealias Target = UIKit.UITableView
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor(unsafe) open class UICollectionViewFlowLayoutAdapter : Carbon.UICollectionViewAdapter {
+  override public init(data: [Carbon.Section] = super)
+  @objc deinit
+}
+extension Carbon.UICollectionViewFlowLayoutAdapter : UIKit.UICollectionViewDelegateFlowLayout {
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, sizeForItemAt indexPath: Foundation.IndexPath) -> CoreFoundation.CGSize
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, referenceSizeForHeaderInSection section: Swift.Int) -> CoreFoundation.CGSize
+  @_Concurrency.MainActor(unsafe) @objc dynamic open func collectionView(_ collectionView: UIKit.UICollectionView, layout collectionViewLayout: UIKit.UICollectionViewLayout, referenceSizeForFooterInSection section: Swift.Int) -> CoreFoundation.CGSize
+}
+open class UITableViewUpdater<Adapter> : Carbon.Updater where Adapter : Carbon.UITableViewAdapter {
+  open var deleteSectionsAnimation: UIKit.UITableView.RowAnimation
+  open var insertSectionsAnimation: UIKit.UITableView.RowAnimation
+  open var reloadSectionsAnimation: UIKit.UITableView.RowAnimation
+  open var deleteRowsAnimation: UIKit.UITableView.RowAnimation
+  open var insertRowsAnimation: UIKit.UITableView.RowAnimation
+  open var reloadRowsAnimation: UIKit.UITableView.RowAnimation
+  open var isAnimationEnabled: Swift.Bool
+  open var isAnimationEnabledWhileScrolling: Swift.Bool
+  open var alwaysRenderVisibleComponents: Swift.Bool
+  open var keepsContentOffset: Swift.Bool
+  open var animatableChangeCount: Swift.Int
+  open var completion: (() -> Swift.Void)?
+  public init()
+  open func set(allAnimation animation: UIKit.UITableView.RowAnimation)
+  open func prepare(target: UIKit.UITableView, adapter: Adapter)
+  open func performUpdates(target: UIKit.UITableView, adapter: Adapter, data: [Carbon.Section])
+  open func performDifferentialUpdates(target: UIKit.UITableView, adapter: Adapter, stagedChangeset: Carbon.StagedDataChangeset)
+  open func renderVisibleComponents(in target: UIKit.UITableView, adapter: Adapter)
+  public typealias Target = UIKit.UITableView
+  @objc deinit
+}
+open class UICollectionViewUpdater<Adapter> : Carbon.Updater where Adapter : Carbon.UICollectionViewAdapter {
+  open var isAnimationEnabled: Swift.Bool
+  open var isAnimationEnabledWhileScrolling: Swift.Bool
+  open var alwaysRenderVisibleComponents: Swift.Bool
+  open var keepsContentOffset: Swift.Bool
+  open var animatableChangeCount: Swift.Int
+  open var completion: (() -> Swift.Void)?
+  public init()
+  open func prepare(target: UIKit.UICollectionView, adapter: Adapter)
+  open func performUpdates(target: UIKit.UICollectionView, adapter: Adapter, data: [Carbon.Section])
+  open func performDifferentialUpdates(target: UIKit.UICollectionView, adapter: Adapter, stagedChangeset: Carbon.StagedDataChangeset)
+  open func renderVisibleComponents(in target: UIKit.UICollectionView, adapter: Adapter)
+  public typealias Target = UIKit.UICollectionView
+  @objc deinit
+}
+public protocol Updater {
+  associatedtype Target : AnyObject
+  associatedtype Adapter : Carbon.Adapter
+  func prepare(target: Self.Target, adapter: Self.Adapter)
+  func performUpdates(target: Self.Target, adapter: Self.Adapter, data: [Carbon.Section])
+}
+open class Renderer<Updater> where Updater : Carbon.Updater {
+  final public let adapter: Updater.Adapter
+  final public let updater: Updater
+  weak open var target: Updater.Target? {
+    get
+    set
+  }
+  open var data: [Carbon.Section] {
+    get
+    set(data)
+  }
+  public init(adapter: Updater.Adapter, updater: Updater)
+  open func render<C>(_ data: C) where C : Swift.Collection, C.Element == Carbon.Section
+  open func render<C>(_ data: C) where C : Swift.Collection, C.Element == Carbon.Section?
+  open func render(_ data: Carbon.Section...)
+  open func render(_ data: Carbon.Section?...)
+  open func render<S>(@Carbon.SectionsBuilder sections: () -> S) where S : Carbon.SectionsBuildable
+  open func render<C>(@Carbon.CellsBuilder cells: () -> C) where C : Carbon.CellsBuildable
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor(unsafe) open class UITableViewComponentCell : UIKit.UITableViewCell, Carbon.ComponentRenderable {
+  @available(*, unavailable)
+  @_Concurrency.MainActor(unsafe) @objc required dynamic public init?(coder aDecoder: Foundation.NSCoder)
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public init(style: UIKit.UITableViewCell.CellStyle, reuseIdentifier: Swift.String?)
+  @objc deinit
+}
+public protocol ComponentRenderable : AnyObject {
+  var componentContainerView: UIKit.UIView { get }
+}
+extension Carbon.ComponentRenderable {
+  public var renderedContent: Any? {
+    get
+  }
+  public var renderedComponent: Carbon.AnyComponent? {
+    get
+  }
+}
+extension Carbon.ComponentRenderable where Self : UIKit.UIView {
+  public var componentContainerView: UIKit.UIView {
+    get
+  }
+}
+extension Carbon.ComponentRenderable where Self : UIKit.UITableViewCell {
+  public var componentContainerView: UIKit.UIView {
+    get
+  }
+}
+extension Carbon.ComponentRenderable where Self : UIKit.UITableViewHeaderFooterView {
+  public var componentContainerView: UIKit.UIView {
+    get
+  }
+}
+extension Carbon.ComponentRenderable where Self : UIKit.UICollectionViewCell {
+  public var componentContainerView: UIKit.UIView {
+    get
+  }
+}
+extension Carbon.ComponentRenderable where Self : UIKit.UICollectionReusableView {
+  public var componentContainerView: UIKit.UIView {
+    get
+  }
+}
+public typealias DataChangeset = DifferenceKit.Changeset<[Carbon.Section]>
+public typealias StagedDataChangeset = DifferenceKit.StagedChangeset<[Carbon.Section]>
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor(unsafe) open class UICollectionViewComponentCell : UIKit.UICollectionViewCell, Carbon.ComponentRenderable {
+  @available(*, unavailable)
+  @_Concurrency.MainActor(unsafe) @objc required dynamic public init?(coder aDecoder: Foundation.NSCoder)
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @objc deinit
+}
+public struct AnyComponent : Carbon.Component {
+  @usableFromInline
+  internal let box: any Carbon.AnyComponentBox
+  @inlinable public var base: Any {
+    get {
+        return box.base
+    }
+  }
+  @inlinable public var reuseIdentifier: Swift.String {
+    get {
+        return box.reuseIdentifier
+    }
+  }
+  public init<Base>(_ base: Base) where Base : Carbon.Component
+  @inlinable public func renderContent() -> Any {
+        return box.renderContent()
+    }
+  @inlinable public func render(in content: Any) {
+        box.render(in: content)
+    }
+  @inlinable public func referenceSize(in bounds: CoreFoundation.CGRect) -> CoreFoundation.CGSize? {
+        return box.referenceSize(in: bounds)
+    }
+  @inlinable public func shouldContentUpdate(with next: Carbon.AnyComponent) -> Swift.Bool {
+        return box.shouldContentUpdate(with: next.box)
+    }
+  @inlinable public func shouldRender(next: Carbon.AnyComponent, in content: Any) -> Swift.Bool {
+        return box.shouldRender(next: next.box, in: content)
+    }
+  @inlinable public func layout(content: Any, in container: UIKit.UIView) {
+        box.layout(content: content, in: container)
+    }
+  @inlinable public func intrinsicContentSize(for content: Any) -> CoreFoundation.CGSize {
+        return box.intrinsicContentSize(for: content)
+    }
+  @inlinable public func contentWillDisplay(_ content: Any) {
+        box.contentWillDisplay(content)
+    }
+  @inlinable public func contentDidEndDisplay(_ content: Any) {
+        box.contentDidEndDisplay(content)
+    }
+  @inlinable public func `as`<T>(_: T.Type) -> T? {
+        return box.base as? T
+    }
+  public typealias Content = Any
+}
+extension Carbon.AnyComponent : Swift.CustomDebugStringConvertible {
+  public var debugDescription: Swift.String {
+    get
+  }
+}
+@usableFromInline
+internal protocol AnyComponentBox {
+  var base: Any { get }
+  var reuseIdentifier: Swift.String { get }
+  func renderContent() -> Any
+  func render(in content: Any)
+  func referenceSize(in bounds: CoreFoundation.CGRect) -> CoreFoundation.CGSize?
+  func layout(content: Any, in container: UIKit.UIView)
+  func intrinsicContentSize(for content: Any) -> CoreFoundation.CGSize
+  func shouldContentUpdate(with next: any Carbon.AnyComponentBox) -> Swift.Bool
+  func shouldRender(next: any Carbon.AnyComponentBox, in content: Any) -> Swift.Bool
+  func contentWillDisplay(_ content: Any)
+  func contentDidEndDisplay(_ content: Any)
+}
+@usableFromInline
+internal struct ComponentBox<Base> : Carbon.AnyComponentBox where Base : Carbon.Component {
+  @usableFromInline
+  internal let baseComponent: Base
+  @inlinable internal var base: Any {
+    get {
+        return baseComponent
+    }
+  }
+  @inlinable internal var reuseIdentifier: Swift.String {
+    get {
+        return baseComponent.reuseIdentifier
+    }
+  }
+  @usableFromInline
+  internal init(_ base: Base)
+  @inlinable internal func renderContent() -> Any {
+        return baseComponent.renderContent()
+    }
+  @inlinable internal func render(in content: Any) {
+        guard let content = content as? Base.Content else { return }
+
+        baseComponent.render(in: content)
+    }
+  @inlinable internal func referenceSize(in bounds: CoreFoundation.CGRect) -> CoreFoundation.CGSize? {
+        return baseComponent.referenceSize(in: bounds)
+    }
+  @inlinable internal func layout(content: Any, in container: UIKit.UIView) {
+        guard let content = content as? Base.Content else { return }
+
+        baseComponent.layout(content: content, in: container)
+    }
+  @inlinable internal func intrinsicContentSize(for content: Any) -> CoreFoundation.CGSize {
+        guard let content = content as? Base.Content else { return .zero }
+
+        return baseComponent.intrinsicContentSize(for: content)
+    }
+  @inlinable internal func shouldContentUpdate(with next: any Carbon.AnyComponentBox) -> Swift.Bool {
+        guard let next = next.base as? Base else { return true }
+
+        return baseComponent.shouldContentUpdate(with: next)
+    }
+  @inlinable internal func shouldRender(next: any Carbon.AnyComponentBox, in content: Any) -> Swift.Bool {
+        guard let next = next.base as? Base, let content = content as? Base.Content else { return true }
+
+        return baseComponent.shouldRender(next: next, in: content)
+    }
+  @inlinable internal func contentWillDisplay(_ content: Any) {
+        guard let content = content as? Base.Content else { return }
+
+        baseComponent.contentWillDisplay(content)
+    }
+  @inlinable internal func contentDidEndDisplay(_ content: Any) {
+        guard let content = content as? Base.Content else { return }
+
+        baseComponent.contentDidEndDisplay(content)
+    }
+}
+public struct CellNode {
+  public var id: Swift.AnyHashable
+  public var component: Carbon.AnyComponent
+  public init<I, C>(id: I, _ component: C) where I : Swift.Hashable, C : Carbon.Component
+  @inlinable public init<C>(_ component: C) where C : Carbon.IdentifiableComponent {
+        self.init(id: component.id, component)
+    }
+  @inlinable public func component<T>(as _: T.Type) -> T? {
+        return component.as(T.self)
+    }
+}
+extension Carbon.CellNode : Carbon.CellsBuildable {
+  public func buildCells() -> [Carbon.CellNode]
+}
+extension Carbon.CellNode : DifferenceKit.Differentiable {
+  @inlinable public var differenceIdentifier: Swift.AnyHashable {
+    get {
+        return id
+    }
+  }
+  @inlinable public func isContentEqual(to source: Carbon.CellNode) -> Swift.Bool {
+        return !source.component.shouldContentUpdate(with: component)
+    }
+  public typealias DifferenceIdentifier = Swift.AnyHashable
+}
+extension Carbon.CellNode : Swift.CustomDebugStringConvertible {
+  @inlinable public var debugDescription: Swift.String {
+    get {
+        return "CellNode(id: \(id), component: \(component))"
+    }
+  }
+}

@@ -6,7 +6,6 @@
 //
 
 import XCTest
-@testable import GXSwiftDemo
 
 final class GXSwiftDemoTests: XCTestCase {
 

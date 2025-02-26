@@ -1,0 +1,4 @@
+framework module Carbon {
+  header "Carbon-Swift.h"
+  requires objc
+}

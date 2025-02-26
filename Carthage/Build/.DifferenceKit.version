@@ -1,0 +1,11 @@
+{
+  "commitish" : "1.1.4",
+  "iOS" : [
+    {
+      "hash" : "384008767cde42fb00c7d383fa772fbe45633b391cdd2a34ea61b8abebae6bd8",
+      "name" : "DifferenceKit",
+      "linking" : "dynamic",
+      "swiftToolchainVersion" : "5.9.2 (swiftlang-5.9.2.2.56 clang-1500.1.0.2.5)"
+    }
+  ]
+}
