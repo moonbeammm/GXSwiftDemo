@@ -63,9 +63,12 @@ class GXStackVC: UIViewController {
         t.distribution = .fillProportionally
         t.alignment = .leading
         t.backgroundColor = .blue
+        t.spacing = 10
         t.addArrangedSubview(label)
         t.addArrangedSubview(label1)
         t.addArrangedSubview(button)
+        
+        label.isHidden = true
         
         view.addSubview(t)
         t.translatesAutoresizingMaskIntoConstraints = false

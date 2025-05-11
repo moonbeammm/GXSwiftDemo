@@ -160,10 +160,80 @@ final class ArrayTests: XCTestCase {
         }
     }
     
-
-
+    func testAttributed23() throws {
+        var test: [Int] = []
+//        var x = test[0]
+        var x = test.first
+        print(":\(x):---------------")
+    }
+    func testPerator() throws {
+        let a1: Int = 9
+        let b1: Int = 2
+        let c1 = a1 /? b1
+        let e1 = a1 /! b1
+        let f1 = a1 / b1
+        print("c: \(c1), e: \(e1), f: \(f1)")
+        assert(c1 == e1 && e1 == f1, "hhh")
+        
+        let a2: Float = 9
+        let b2: Float = 0.0
+        let c2 = a2 /? b2
+        let e2 = a2 /! b2
+        let f2 = a2 / b2
+        print("c: \(c2), e: \(e2), f: \(f2)")
+//        assert(c2 == e2 && e2 == f2, "hhh")
+        // c: nil, e: 0.0, f: inf
+    }
 
 }
+//infix operator /? : MultiplicationPrecedence
+//func /? (lhs: Double, rhs: Double) -> Double? {
+//    return rhs == 0 ? nil : lhs / rhs
+//}
+//infix operator /! : MultiplicationPrecedence
+//func /!<T: FloatingPoint>(lhs: T, rhs: T) -> T? {
+//    return rhs == 0 ? 0 : lhs / rhs
+//}
+//infix operator /? : MultiplicationPrecedence
+//func /?<T: FloatingPoint>(lhs: T, rhs: T) -> T? {
+//    return rhs == 0 ? nil : lhs / rhs
+//}
+//infix operator /! : MultiplicationPrecedence
+//func /!<T: Numeric>(lhs: T, rhs: T) -> T? {
+//    if let lhs = lhs as? any FloatingPoint, let rhs = rhs as? any FloatingPoint {
+//        return rhs == 0 ? 0 : lhs / rhs as! T
+//    } else if T.self is BinaryInteger.Type {
+//        return rhs == 0 ? 0 : lhs / rhs
+//    }
+//    
+//}
+
+// 扩展 FloatingPoint
+infix operator /? : MultiplicationPrecedence
+infix operator /! : MultiplicationPrecedence
+extension FloatingPoint {
+    static func /? (lhs: Self, rhs: Self) -> Self? {
+        guard !rhs.isZero else { return nil }
+        return lhs / rhs
+    }
+    static func /! (lhs: Self, rhs: Self) -> Self {
+        guard !rhs.isZero else { return 0 }
+        return lhs / rhs
+    }
+}
+
+// 扩展 BinaryInteger
+extension BinaryInteger {
+    static func /? (lhs: Self, rhs: Self) -> Self? {
+        guard rhs != 0 else { return nil }
+        return lhs / rhs
+    }
+    static func /! (lhs: Self, rhs: Self) -> Self {
+        guard rhs != 0 else { return 0 }
+        return lhs / rhs
+    }
+}
+
 extension NSAttributedString {
     func safe_attributedSubstring(from range: NSRange) -> NSAttributedString? {
         guard range.location >= 0, range.location + range.length <= self.length else {

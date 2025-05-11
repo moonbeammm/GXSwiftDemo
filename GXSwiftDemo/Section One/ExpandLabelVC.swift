@@ -11,13 +11,11 @@ import RxSwift
 import RxCocoa
 
 extension Reactive where Base: UIView {
-    var hitTest: Observable<(CGPoint, UIEvent?)> {
-        methodInvoked(#selector(UIView.hitTest(_:with:))).map { xx in
-            guard let xx = xx[0] as? CGPoint else {
-                return (CGPoint.zero, nil)
-            }
-            print("sgx <<  point \(xx)")
-            return (CGPoint.zero, nil)
+    var hitTest: Observable<(CGPoint?, UIEvent?)> {
+        methodInvoked(#selector(UIView.hitTest(_:with:))).map { args in
+            var point = args[0] as? CGPoint
+            var event = args[1] as? UIEvent
+            return (point, event)
         }
     }
 }
@@ -97,9 +95,9 @@ class ExpandLabelVC: UIViewController {
         super.viewDidLoad()
         
         //open func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView?
-        view.rx.hitTest.share().subscribe { xx in
-            print("sgx << \(xx)")
-        }.disposed(by: disposeBag)
+    view.rx.hitTest.share().subscribe { args in
+        print("sgx hitTest point: \(args.0) event: \(args.1)")
+    }.disposed(by: disposeBag)
 
         
         let testView = UIButton(type: .custom)
