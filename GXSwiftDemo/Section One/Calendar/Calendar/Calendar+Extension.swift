@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Calendar {
+public extension Calendar {
     private static var componentsKey: UInt8 = 0
     var privateComponents: DateComponents {
         get {

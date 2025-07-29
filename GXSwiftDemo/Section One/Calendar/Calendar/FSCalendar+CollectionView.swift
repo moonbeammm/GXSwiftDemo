@@ -217,6 +217,14 @@ extension FSCalendar: UICollectionViewDataSource {
             cell.placeholder = !isDateInRange(date)
         }
         
+        if let transition = transitionCoordinator.transitionAttributes,
+           transition.targetScope == .month {
+            let row = calculator.coordinate(for: indexPath).row
+            let focused = row == transition.focusedRow
+            cell.alpha = focused ? 1.0 : 0.0
+            print("sgx cell.alpha \(cell.alpha) title: \(cell.titleLabel.text)")
+        }
+        
         // Synchronize selection state with the collection view
         if cell.isSelected {
             collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])

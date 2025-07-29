@@ -2,6 +2,7 @@ import UIKit
 
 class CalendarVC: UIViewController, UITableViewDataSource, UITableViewDelegate, FSCalendarDataSource, FSCalendarDelegate, UIGestureRecognizerDelegate {
     private var calendar: FSCalendar!
+    private var pullBar: UIView!
     private var tableView: UITableView!
     private var calendarHeightConstraint: NSLayoutConstraint!
     private var scopeGesture: UIPanGestureRecognizer!
@@ -43,6 +44,13 @@ class CalendarVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         let height = 24.0 + 44.0 + 300.0
         self.calendarHeightConstraint = self.calendar.heightAnchor.constraint(equalToConstant: height)
         self.calendarHeightConstraint.isActive = true
+        
+        
+        
+        
+        
+        
+        
 
         // Initialize and configure tableView
         self.tableView = UITableView(frame: .zero, style: .grouped)
@@ -58,6 +66,22 @@ class CalendarVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             self.tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
             self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
         ])
+        
+        
+        self.pullBar = UIView()
+        self.pullBar.isUserInteractionEnabled = true
+        self.pullBar.backgroundColor = .blue
+        self.pullBar.layer.masksToBounds = true
+        self.pullBar.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+        self.pullBar.layer.cornerRadius = 12
+        view.addSubview(pullBar)
+        self.pullBar.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.pullBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            self.pullBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            self.pullBar.topAnchor.constraint(equalTo: tableView.topAnchor),
+            self.pullBar.heightAnchor.constraint(equalToConstant: 50)
+        ])
 
         // Add gesture recognizer
         // 不设置则不支持scope切换
@@ -70,12 +94,31 @@ class CalendarVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
 
         // Ensure tableView's pan gesture fails when scope gesture begins
         self.tableView.panGestureRecognizer.require(toFail: panGesture)
+        
+        let one = "2025-05-15"
+        let oneDate = calendar.formatter.date(from: one)
+        let two = "2025-05-11"
+        let twoDate = calendar.formatter.date(from: two)
+        if let oneData = oneDate, let twoDate = twoDate {
+            let result = calendar.gregorian.isDate(oneData, equalTo: twoDate, toGranularity: .weekOfYear)
+            print("sgx >> \(result)")
+        }
     }
 
     // MARK: - UIGestureRecognizerDelegate
 
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        let shouldBegin = self.tableView.contentOffset.y <= -self.tableView.contentInset.top
+//        let shouldBegin =
+        
+        var shouldBegin = false
+        let touchPoint = gestureRecognizer.location(in: view)
+        print("sgx >>> \(touchPoint) \(pullBar.frame) \(pullBar.bounds)")
+        if pullBar.frame.contains(touchPoint) {
+            shouldBegin = true
+        } else {
+            shouldBegin = self.tableView.contentOffset.y <= -self.tableView.contentInset.top
+        }
+        
         if shouldBegin {
             let velocity = self.scopeGesture.velocity(in: self.view)
             switch self.calendar.currentScope {
@@ -91,7 +134,9 @@ class CalendarVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     }
 
     // MARK: - FSCalendarDelegate
-
+    func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at position: FSCalendarMonthPosition) -> Bool? {
+        date != calendar.maximumDate
+    }
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at position: FSCalendarMonthPosition) {
         print("did select date \(calendar.formatter.string(from: date))")
         
@@ -153,8 +198,8 @@ class CalendarVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     // MARK: - UITableViewDelegate
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedScope: FSCalendarScope = self.calendar.currentScope == .month ? .week : .month
-        self.calendar.changeScope(to: selectedScope, animated: true)
+//        let selectedScope: FSCalendarScope = self.calendar.currentScope == .month ? .week : .month
+//        self.calendar.changeScope(to: selectedScope, animated: true)
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

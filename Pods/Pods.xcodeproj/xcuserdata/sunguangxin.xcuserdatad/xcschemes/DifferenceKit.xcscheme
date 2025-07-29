@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8FC6E51285E4FD828A61BEFD2100CD64"
-               BuildableName = "libDifferenceKit.a"
+               BuildableName = "DifferenceKit.framework"
                BlueprintName = "DifferenceKit"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>

@@ -82,5 +82,37 @@ class GXStackVC: UIViewController {
                 q.nestedAccess()
             }
         }
+        
+        configRendering()
+    }
+}
+
+
+extension GXStackVC {
+    func configRendering() {
+        let image1 = UIImage(named: "tv_icon")
+        let imageView1 = UIImageView()
+        imageView1.contentMode = .scaleAspectFit
+        imageView1.image = image1
+        
+        let image2 = UIImage(named: "tv_icon")?.withRenderingMode(.alwaysTemplate)
+        let imageView2 = UIImageView()
+        imageView2.contentMode = .scaleAspectFit
+        imageView2.image = image2
+        print("\(imageView2.tintColor)")
+        
+        let image3 = UIImage(named: "tv_icon")?.withRenderingMode(.alwaysTemplate)
+        let imageView3 = UIImageView()
+        imageView3.contentMode = .scaleAspectFit
+        imageView3.tintColor = .red
+        imageView3.image = image3
+        print("\(imageView3.tintColor)")
+        
+        self.view.addSubview(imageView1)
+        imageView1.frame = .init(x: 100, y: 100, width: 30, height: 30)
+        self.view.addSubview(imageView2)
+        imageView2.frame = .init(x: 100, y: 150, width: 30, height: 30)
+        self.view.addSubview(imageView3)
+        imageView3.frame = .init(x: 100, y: 200, width: 30, height: 30)
     }
 }

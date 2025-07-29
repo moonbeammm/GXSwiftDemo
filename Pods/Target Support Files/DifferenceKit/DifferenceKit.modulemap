@@ -1,4 +1,4 @@
-module DifferenceKit {
+framework module DifferenceKit {
   umbrella header "DifferenceKit-umbrella.h"
 
   export *

@@ -1,4 +1,4 @@
-module Pods_GXSwiftDemo {
+framework module Pods_GXSwiftDemo {
   umbrella header "Pods-GXSwiftDemo-umbrella.h"
 
   export *

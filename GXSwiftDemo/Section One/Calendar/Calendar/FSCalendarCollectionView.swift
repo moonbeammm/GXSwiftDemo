@@ -180,6 +180,9 @@ class FSCalendarCollectionViewLayout: UICollectionViewLayout {
 
         let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
         let frame: CGRect = {
+            guard row < heights.count, column < widths.count else {
+                return .zero
+            }
             let width = widths[column]
             let height = heights[row]
             let x = lefts[column] + CGFloat(indexPath.section) * collectionView.bounds.width

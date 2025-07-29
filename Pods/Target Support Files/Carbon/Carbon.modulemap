@@ -1,4 +1,4 @@
-module Carbon {
+framework module Carbon {
   umbrella header "Carbon-umbrella.h"
 
   export *

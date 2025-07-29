@@ -105,6 +105,10 @@ public class FSCalendarCell: UICollectionViewCell {
     }
 
     private var cellBgColor: UIColor? {
+        return self.cellBgColor(self.calendar?.currentScope)
+    }
+    
+    func cellBgColor(_ scope: FSCalendarScope?) -> UIColor? {
         if isSelected {
             if dateIsToday, let t = calendar?.appearance.todaySelectionCellBgColor {
                 return t
@@ -121,7 +125,7 @@ public class FSCalendarCell: UICollectionViewCell {
         if weekend, let t = calendar?.appearance.weekendCellBgColor {
             return t
         }
-        if calendar?.transitionCoordinator.representingScope == .week, let t = calendar?.appearance.weekNormalCellBgColor {
+        if scope == .week, let t = calendar?.appearance.weekNormalCellBgColor {
             return t
         }
         return calendar?.appearance.monthNormalCellBgColor

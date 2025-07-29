@@ -32,8 +32,8 @@ public class FSCalendarAppearance: NSObject {
     public var locale: Locale = .current
     public var timeZone: TimeZone = .current
     public var dateFormat: String = "yyyy-MM-dd"
-    public var minimumDate: String = "1970-01-01"
-    public var maximumDate: String = "2099-12-31"
+    public var minimumDate: String = "2025-04-01"
+    public var maximumDate: String = "2025-07-01"
     /// 切换月份时日历高度是否自适应
     public var adjustsBoundingRectWhenChangingMonths: Bool = false
     public var placeholderType: FSCalendarPlaceholderType = .fillSixRows

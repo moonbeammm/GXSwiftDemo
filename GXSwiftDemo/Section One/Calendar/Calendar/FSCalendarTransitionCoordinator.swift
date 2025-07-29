@@ -47,8 +47,8 @@ class FSCalendarTransitionCoordinator: NSObject {
             return .month
         }
     }
-    private weak var calendar: FSCalendar?
-    private var transitionAttributes: FSCalendarTransitionAttributes?
+    weak var calendar: FSCalendar?
+    var transitionAttributes: FSCalendarTransitionAttributes?
 
     init(calendar: FSCalendar) {
         super.init()
@@ -161,24 +161,48 @@ extension FSCalendarTransitionCoordinator {
         }
         state = .none
         transitionAttributes = nil
+        
+        calendar.reloadData()
         calendar.setNeedsLayout()
         calendar.layoutIfNeeded()
     }
     
     private func performAlphaAnimation(withProgress progress: CGFloat) {
-        guard let calendar = calendar else { return }
-        let opacity: CGFloat = transitionAttributes?.targetScope == .week ? max(1 - progress * 1.1, 0) : progress
+        guard let calendar = calendar, let transition = transitionAttributes else { return }
+        let opacity: CGFloat = transition.targetScope == .week ? max(1 - progress * 1.1, 0) : progress
         let visibleCells = calendar.visibleCells()
-        let surroundingCells = visibleCells.filter { cell in
-            if calendar.collectionView.bounds.contains(cell.center) == false {
-                return false
+
+        var surroundingCells: [FSCalendarCell] = []
+        var focusedCells: [FSCalendarCell] = []
+        for cell in visibleCells {
+            let focused: Bool = {
+                if calendar.collectionView.bounds.contains(cell.center) == false {
+                    return false
+                }
+                guard let indexPath = calendar.collectionView.indexPath(for: cell) else { return false }
+                let row = calendar.calculator.coordinate(for: indexPath).row
+                return row == transition.focusedRow
+            }()
+            if focused {
+                focusedCells.append(cell)
+            } else {
+                surroundingCells.append(cell)
             }
-            guard let indexPath = calendar.collectionView.indexPath(for: cell) else { return false }
-            let row = calendar.calculator.coordinate(for: indexPath).row
-            return row != transitionAttributes?.focusedRow
         }
+        
         surroundingCells.forEach { cell in
+            print("sgx opacity \(opacity) cell.alpha \(cell.alpha) title: \(cell.titleLabel.text)")
+            if let targetColor = cell.cellBgColor(.month) {
+                cell.container.backgroundColor = targetColor
+            }
             cell.alpha = opacity
+        }
+        focusedCells.forEach { cell in
+            guard let currentColor = cell.cellBgColor(transition.targetScope.toggle),
+                  let targetColor = cell.cellBgColor(transition.targetScope) else {
+                return
+            }
+            cell.container.backgroundColor = UIColor.interpolate(from: currentColor, to: targetColor, with: progress)
         }
     }
     
@@ -214,14 +238,77 @@ extension FSCalendarTransitionCoordinator {
             calendar?.contentView.fs_height = t
         }
         calendar?.needsAdjustingViewFrame = true
-
+//        calendar?.collectionView.collectionViewLayout.invalidateLayout()
         CATransaction.begin()
         CATransaction.setDisableActions(false)
+        
+        
+
+        
+        
         calendar?.collectionView.reloadData()
         calendar?.layoutIfNeeded()
-        CATransaction.commit()
+        
+        let visibleCells = calendar?.visibleCells() ?? []
 
+        var surroundingCells: [FSCalendarCell] = []
+        var focusedCells: [FSCalendarCell] = []
+        for cell in visibleCells {
+            let focused: Bool = {
+                if calendar?.collectionView.bounds.contains(cell.center) == false {
+                    return false
+                }
+                guard let indexPath = calendar?.collectionView.indexPath(for: cell) else { return false }
+                let row = calendar?.calculator.coordinate(for: indexPath).row
+                return row == transitionAttributes?.focusedRow
+            }()
+            if focused {
+                focusedCells.append(cell)
+            } else {
+                surroundingCells.append(cell)
+            }
+        }
+        
+        surroundingCells.forEach { cell in
+            cell.alpha = 0.0
+        }
+        
+        CATransaction.commit()
+//
         calendar?.collectionView.fs_top = calculateOffset(forProgress: 0)
+    }
+}
+
+extension UIColor {
+    /// 根据系数（0~1）在两个颜色之间插值
+    static func interpolate(from startColor: UIColor, to endColor: UIColor, with ratio: CGFloat) -> UIColor {
+        var startRed: CGFloat = 0, startGreen: CGFloat = 0, startBlue: CGFloat = 0, startAlpha: CGFloat = 0
+        var endRed: CGFloat = 0, endGreen: CGFloat = 0, endBlue: CGFloat = 0, endAlpha: CGFloat = 0
+        
+        // 获取颜色的 RGBA 分量
+        startColor.getRed(&startRed, green: &startGreen, blue: &startBlue, alpha: &startAlpha)
+        endColor.getRed(&endRed, green: &endGreen, blue: &endBlue, alpha: &endAlpha)
+        
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+        if startAlpha < 0.01 {
+            red = endRed
+            green = endGreen
+            blue = endBlue
+            alpha = startAlpha + (endAlpha - startAlpha) * ratio
+        } else if endAlpha < 0.01 {
+            red = startRed
+            green = startGreen
+            blue = startBlue
+            alpha = startAlpha + (endAlpha - startAlpha) * ratio
+        } else {
+            // 计算插值后的颜色分量
+            red = startRed + (endRed - startRed) * ratio
+            green = startGreen + (endGreen - startGreen) * ratio
+            blue = startBlue + (endBlue - startBlue) * ratio
+            alpha = startAlpha + (endAlpha - startAlpha) * ratio
+        }
+
+        return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
 }
 
@@ -297,6 +384,7 @@ extension FSCalendarTransitionCoordinator {
         guard state == .none, let calendar = calendar else { return }
 
         let velocity = panGesture.velocity(in: panGesture.view)
+//        print("sgx >> update \(velocity)")
         if calendar.currentScope == .month && velocity.y >= 0 {
             return
         }
@@ -316,37 +404,52 @@ extension FSCalendarTransitionCoordinator {
     private func scopeTransitionDidUpdate(_ panGesture: UIPanGestureRecognizer) {
         guard state == .changing else { return }
 
-        let translation = abs(panGesture.translation(in: panGesture.view).y)
+        let translation = panGesture.translation(in: panGesture.view).y
+        
+        let velocity = panGesture.velocity(in: panGesture.view)
+//        print("sgx >> update \(velocity)")
+        
+        if calendar?.currentScope == .month && translation >= 0 {
+            return
+        }
+        if calendar?.currentScope == .week && translation <= 0 {
+            return
+        }
+        
         let progress: CGFloat = {
             let maxTranslation = abs((transitionAttributes?.targetBounds.height ?? 0) - (transitionAttributes?.sourceBounds.height ?? 0))
-            let clampedTranslation = max(0, min(maxTranslation, translation))
+            let clampedTranslation = max(0, min(maxTranslation, abs(translation)))
             return clampedTranslation / maxTranslation
         }()
-
+        
+//        print("sgx >> update \(progress) \(translation)")
         performAlphaAnimation(withProgress: progress)
         performPathAnimation(withProgress: progress)
     }
     
     private func scopeTransitionDidEnd(_ panGesture: UIPanGestureRecognizer) {
-        guard state == .changing else { return }
+        guard state == .changing, let transition = transitionAttributes else { return }
         
         state = .finish
 
         let translation = panGesture.translation(in: panGesture.view).y
         let velocity = panGesture.velocity(in: panGesture.view).y
         
+        let maxTranslation = transition.targetBounds.height - transition.sourceBounds.height
         let progress: CGFloat = {
-            let maxTranslation = transitionAttributes?.targetBounds.height ?? 0 - (transitionAttributes?.sourceBounds.height ?? 0)
             let clampedTranslation = max(0, min(maxTranslation, translation))
             return clampedTranslation / maxTranslation
         }()
-        
-        if velocity * translation < 0 {
-            transitionAttributes?.revert()
+//        print("sgx >> end \(velocity) \(translation) \(maxTranslation)")
+//        if velocity * translation < 0 {
+//            transitionAttributes?.revert()
+//        }
+        if abs(translation) < 40 ||
+           (calendar?.currentScope == .month && velocity >= 0) || // 当前为月态，但是手势结束的时候用户是往下滑的，则revert
+           (calendar?.currentScope == .week && velocity <= 0) {   // 当前为周态，但是手势结束的时候用户是往上滑的，则revert
+            transition.revert()
         }
-        if let targetScope = transitionAttributes?.targetScope {
-            performTransition(to: targetScope, fromProgress: progress, toProgress: 1.0, animated: true)
-        }
+        performTransition(to: transition.targetScope, fromProgress: progress, toProgress: 1.0, animated: true)
     }
     
     private func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {

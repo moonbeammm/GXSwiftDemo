@@ -1,0 +1,7 @@
+${PODS_ROOT}/Target Support Files/Pods-GXSwiftDemo/Pods-GXSwiftDemo-frameworks.sh
+${BUILT_PRODUCTS_DIR}/Carbon/Carbon.framework
+${BUILT_PRODUCTS_DIR}/DifferenceKit/DifferenceKit.framework
+${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework
+${BUILT_PRODUCTS_DIR}/RxRelay/RxRelay.framework
+${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework
+${BUILT_PRODUCTS_DIR}/SteviaLayout/Stevia.framework

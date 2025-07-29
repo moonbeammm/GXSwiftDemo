@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "28DBFD7C4BA62D2E2BCB62172DE80B6B"
-               BuildableName = "libCarbon.a"
+               BuildableName = "Carbon.framework"
                BlueprintName = "Carbon"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>

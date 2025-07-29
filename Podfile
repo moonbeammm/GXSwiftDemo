@@ -5,4 +5,6 @@ target 'GXSwiftDemo' do
 	pod 'RxSwift'
 	pod 'RxCocoa'
 	pod 'RxRelay'
+	pod 'SteviaLayout'
+	use_frameworks!
 end
