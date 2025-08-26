@@ -116,12 +116,20 @@ extension VDDetailContainerBlocV3 {
     }
     
     func onPanGestureDidScroll(with offset: CGFloat, info: LayoutInfo) {
+        reloadConstraints(with: offset, info: info)
+    }
+}
+
+// MARK: Update Constraints
+
+extension VDDetailContainerBlocV3 {
+    func reloadConstraints(with offset: CGFloat, info: LayoutInfo) {
         var playerHeight: CGFloat
         let topMargin = info.maxHeight + info.extraHeight + Constant.safeAreaTop - offset
         
         if topMargin <= (Constant.horizonHeight + Constant.safeAreaTop) {
             playerHeight = topMargin - Constant.safeAreaTop
-            print("\(Constant.tag) 在小于播放器高度区域滚动 playerheight:\(playerHeight) topmargin:\(topMargin)")
+            // print("\(Constant.tag) 在小于播放器高度区域滚动 playerheight:\(playerHeight) topmargin:\(topMargin)")
         } else if topMargin < (Constant.horizonHeight + info.extraHeight + Constant.safeAreaTop),
                   topMargin > (Constant.horizonHeight + Constant.safeAreaTop) {
             playerHeight = Constant.horizonHeight
@@ -129,32 +137,28 @@ extension VDDetailContainerBlocV3 {
             let alpha = (topMargin - playerHeight - Constant.safeAreaTop) / info.extraHeight
             let result = min(max(alpha, 0.0), 1.0)
             // playerBloc.player.context.controlWidgetService?.alpha = result
-            print("\(Constant.tag) 在黑条范围内滚动 playerheight:\(playerHeight) topmargin:\(topMargin) alpha:\(alpha) result:\(result)")
+            // print("\(Constant.tag) 在黑条范围内滚动 playerheight:\(playerHeight) topmargin:\(topMargin) alpha:\(alpha) result:\(result)")
         } else if info.maxHeight > Constant.horizonHeight,
                   topMargin >= (Constant.horizonHeight + info.extraHeight + Constant.safeAreaTop),
                   topMargin < (info.maxHeight + info.extraHeight + Constant.safeAreaTop) {
             playerHeight = topMargin - info.extraHeight - Constant.safeAreaTop
-            print("\(Constant.tag) 在大于16：9，小于竖屏最大高度区域滚动（应该只有竖屏视频才会进） playerheight:\(playerHeight) topmargin:\(topMargin)")
+            // print("\(Constant.tag) 在大于16：9，小于竖屏最大高度区域滚动（应该只有竖屏视频才会进） playerheight:\(playerHeight) topmargin:\(topMargin)")
         } else {
             playerHeight = info.maxHeight
             
             let alpha = 1 - (offset / pullDismissThreshod)
             let result = min(max(alpha, 0.0), 1.0)
             // playerBloc.player.context.controlWidgetService?.alpha = result
-            print("\(Constant.tag) 在超出播放器最大高度区域滚动 playerheight:\(playerHeight) topmargin:\(topMargin) alpha:\(alpha) result:\(result)")
+            // print("\(Constant.tag) 在超出播放器最大高度区域滚动 playerheight:\(playerHeight) topmargin:\(topMargin) alpha:\(alpha) result:\(result)")
         }
         
         updatePlayerConstraints(playerHeight, extraHeight: info.extraHeight)
         updateTabContainerConstraints(isFullScreen ? Constant.SCREEN_WIDTH : topMargin, info: info)
+        // reloadRenderMode()
         
         contentVC?.setNeedsStatusBarAppearanceUpdate()
         contentVC?.setNeedsUpdateOfHomeIndicatorAutoHidden()
     }
-}
-
-// MARK: Update Constraints
-
-extension VDDetailContainerBlocV3 {
     func updatePlayerConstraints(_ playerHeight: CGFloat, extraHeight: CGFloat) {
         guard let contentVC = contentVC else {
             return
@@ -197,6 +201,7 @@ extension VDDetailContainerBlocV3 {
                 playerViewHeightConstraint.priority = UILayoutPriority.required
                 playerViewHeightConstraint.isActive = true
             }
+            // updatePlayerCanvasRect(.init(x: 0, y: 0, width: SCREEN_WIDTH, height: playerHeight))
         }
     }
     func updateTabContainerConstraints(_ topMargin: CGFloat, info: LayoutInfo) {
@@ -250,33 +255,35 @@ extension VDDetailContainerBlocV3 {
 
 extension VDDetailContainerBlocV3 {
     func _configSubviews() {
-        playerVC.willMove(toParent: self)
-        self.addChild(playerVC)
-        playerVC.didMove(toParent: self)
-        tabContainerVC.willMove(toParent: self)
-        self.addChild(tabContainerVC)
-        tabContainerVC.didMove(toParent: self)
-        
-        view.addSubview(playerVC.view)
-        playerVC.view.addSubview(blackBar)
-        view.addSubview(tabContainerVC.view)
-        
+        guard let contentVC = contentVC else { return }
+
+        playerVC.willMove(toParent: contentVC)
+        contentVC.addChild(playerVC)
+        playerVC.didMove(toParent: contentVC)
+        tabContainerVC.willMove(toParent: contentVC)
+        contentVC.addChild(tabContainerVC)
+        tabContainerVC.didMove(toParent: contentVC)
+
+        contentVC.view.addSubview(playerVC.view)
+        contentVC.view.addSubview(tabContainerVC.view)
+
         playerVC.view.translatesAutoresizingMaskIntoConstraints = false
-        playerVC.view.topAnchor.constraint(equalTo: view.topAnchor, constant: Constant.safeAreaTop).isActive = true
-        playerVC.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        playerVC.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        playerVC.view.topAnchor.constraint(equalTo: contentVC.view.topAnchor, constant: Constant.safeAreaTop).isActive = true
+        playerVC.view.leftAnchor.constraint(equalTo: contentVC.view.leftAnchor).isActive = true
+        playerVC.view.rightAnchor.constraint(equalTo: contentVC.view.rightAnchor).isActive = true
+
+        tabContainerVC.view.translatesAutoresizingMaskIntoConstraints = false
+        tabContainerVC.view.topAnchor.constraint(equalTo: contentVC.view.topAnchor).isActive = true
+        tabContainerVC.view.leftAnchor.constraint(equalTo: contentVC.view.leftAnchor).isActive = true
+        tabContainerVC.view.widthAnchor.constraint(equalToConstant: Constant.SCREEN_WIDTH).isActive = true
+        tabContainerVC.view.heightAnchor.constraint(equalTo: contentVC.view.heightAnchor).isActive = true
         
+        playerVC.view.addSubview(blackBar)
         blackBar.translatesAutoresizingMaskIntoConstraints = false
         blackBar.leftAnchor.constraint(equalTo: playerVC.view.leftAnchor).isActive = true
         blackBar.rightAnchor.constraint(equalTo: playerVC.view.rightAnchor).isActive = true
         blackBar.heightAnchor.constraint(equalToConstant: Constant.blackBarHeight).isActive = true
         blackBar.bottomAnchor.constraint(equalTo: playerVC.view.bottomAnchor).isActive = true
-        
-        tabContainerVC.view.translatesAutoresizingMaskIntoConstraints = false
-        tabContainerVC.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        tabContainerVC.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        tabContainerVC.view.widthAnchor.constraint(equalToConstant: Constant.SCREEN_WIDTH).isActive = true
-        tabContainerVC.view.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
     }
 }
 

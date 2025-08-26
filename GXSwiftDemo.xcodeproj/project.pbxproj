@@ -43,6 +43,7 @@
 		8EFD969E2BD555A500744E8D /* StringCountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD969D2BD555A500744E8D /* StringCountTests.swift */; };
 		B7037DB52D13CD45006335AF /* ExpandLabelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7037DB42D13CD45006335AF /* ExpandLabelVC.swift */; };
 		B71516AB2E37AC2C0043A156 /* NestedScrollVC+Scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71516AA2E37AC2C0043A156 /* NestedScrollVC+Scroll.swift */; };
+		B7288A0C2E387947002C1169 /* Rotate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7288A0B2E387947002C1169 /* Rotate.swift */; };
 		B73393E62D96C02B00DCE5D6 /* CollectionViewDiffableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73393E52D96C02B00DCE5D6 /* CollectionViewDiffableVC.swift */; };
 		B74950722E26991800697353 /* NestedScrollVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74950712E26991800697353 /* NestedScrollVC.swift */; };
 		B74950742E27B1E900697353 /* TabContainerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74950732E27B1E900697353 /* TabContainerVC.swift */; };
@@ -64,6 +65,7 @@
 		B77BFE6B2DCE045100729E82 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B77BFE5C2DCE045100729E82 /* UIView+Extension.swift */; };
 		B77BFE6C2DCE045100729E82 /* FSCalendarAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = B77BFE552DCE045100729E82 /* FSCalendarAppearance.swift */; };
 		B77BFE6D2DCE045100729E82 /* Calendar+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B77BFE502DCE045100729E82 /* Calendar+Extension.swift */; };
+		B79F889E2E4A09BC0008C019 /* PopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79F889D2E4A09BC0008C019 /* PopupViewController.swift */; };
 		B7A844C82CF5B477001990D3 /* VKCheckmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A844C72CF5B477001990D3 /* VKCheckmarkView.swift */; };
 		B7DBC8722D3BD3C7005518F4 /* CenterListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7DBC8712D3BD3C7005518F4 /* CenterListVC.swift */; };
 		B7E221E22D2A9DCC000B1F82 /* ServerTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7E221E12D2A9DCC000B1F82 /* ServerTime.swift */; };
@@ -129,6 +131,7 @@
 		8EFD969D2BD555A500744E8D /* StringCountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringCountTests.swift; sourceTree = "<group>"; };
 		B7037DB42D13CD45006335AF /* ExpandLabelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandLabelVC.swift; sourceTree = "<group>"; };
 		B71516AA2E37AC2C0043A156 /* NestedScrollVC+Scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NestedScrollVC+Scroll.swift"; sourceTree = "<group>"; };
+		B7288A0B2E387947002C1169 /* Rotate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rotate.swift; sourceTree = "<group>"; };
 		B73393E52D96C02B00DCE5D6 /* CollectionViewDiffableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewDiffableVC.swift; sourceTree = "<group>"; };
 		B74950712E26991800697353 /* NestedScrollVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestedScrollVC.swift; sourceTree = "<group>"; };
 		B74950732E27B1E900697353 /* TabContainerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabContainerVC.swift; sourceTree = "<group>"; };
@@ -150,6 +153,7 @@
 		B77BFE5B2DCE045100729E82 /* FSCalendarWeekdayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSCalendarWeekdayView.swift; sourceTree = "<group>"; };
 		B77BFE5C2DCE045100729E82 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		B77BFE5E2DCE045100729E82 /* CalendarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarVC.swift; sourceTree = "<group>"; };
+		B79F889D2E4A09BC0008C019 /* PopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupViewController.swift; sourceTree = "<group>"; };
 		B7A844C72CF5B477001990D3 /* VKCheckmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VKCheckmarkView.swift; sourceTree = "<group>"; };
 		B7DBC8712D3BD3C7005518F4 /* CenterListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterListVC.swift; sourceTree = "<group>"; };
 		B7E221E12D2A9DCC000B1F82 /* ServerTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTime.swift; sourceTree = "<group>"; };
@@ -244,6 +248,7 @@
 				8E67DFD82BDE47C10014FDDC /* Decoder.swift */,
 				8E67DFDB2BDE47C10014FDDC /* ImageDownloader.swift */,
 				B7E221E12D2A9DCC000B1F82 /* ServerTime.swift */,
+				B7288A0B2E387947002C1169 /* Rotate.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -347,6 +352,7 @@
 			isa = PBXGroup;
 			children = (
 				B74950712E26991800697353 /* NestedScrollVC.swift */,
+				B79F889D2E4A09BC0008C019 /* PopupViewController.swift */,
 				B71516AA2E37AC2C0043A156 /* NestedScrollVC+Scroll.swift */,
 				B74950732E27B1E900697353 /* TabContainerVC.swift */,
 				B74950772E27BBD700697353 /* VDDetailScrollManager.swift */,
@@ -582,6 +588,7 @@
 			files = (
 				B77BFE602DCE045100729E82 /* FSCalendarCollectionView.swift in Sources */,
 				B77BFE612DCE045100729E82 /* CalendarVC.swift in Sources */,
+				B79F889E2E4A09BC0008C019 /* PopupViewController.swift in Sources */,
 				B77BFE622DCE045100729E82 /* FSCalendarCalculator.swift in Sources */,
 				B74950762E27BAFF00697353 /* NestedCell.swift in Sources */,
 				B77BFE632DCE045100729E82 /* FSCalendar.swift in Sources */,
@@ -628,6 +635,7 @@
 				8E0ABFA92C1AFA640031931D /* GradientLayerVC.swift in Sources */,
 				8E67DFDC2BDE47C10014FDDC /* Decoder.swift in Sources */,
 				8EBB5F322BD1815A0029EDE1 /* SceneDelegate.swift in Sources */,
+				B7288A0C2E387947002C1169 /* Rotate.swift in Sources */,
 				8E67DFDE2BDE47C10014FDDC /* CellComponent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

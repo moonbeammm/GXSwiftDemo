@@ -144,12 +144,19 @@ extension VDDetailScrollManager {
         let newOffset = min(max(self.offset - delta, 0), offsetRange.max)
                         
         // 3. 停止条件（基于速度和边界值）
-        if abs(inertialVelocity) < 5.0 ||
-            (direction == .down && newOffset <= 0) ||
-            (direction == .up && newOffset >= offsetRange.max) {
+        if (direction == .down && newOffset <= 0) || (direction == .up && newOffset >= offsetRange.max) {
             reset()
-            return
+        } else if abs(inertialVelocity) < 5.0 {
+            if (direction == .down && newOffset <= PanConstant.supplementThreshold) ||
+               (direction == .up && newOffset >= (offsetRange.max - PanConstant.supplementThreshold)) {
+                // WORKAROUND: 惯性滑动时，可能会与边界差几像素时就停下来了。此处补充一下惯性。
+                inertialVelocity *= PanConstant.supplementRate
+                onPanGestureDidScroll(newOffset, direction: direction, from: "惯性补充")
+            } else {
+                reset()
+            }
         }
+        
         onPanGestureDidScroll(newOffset, direction: direction, from: "惯性")
     }
 }
@@ -158,6 +165,8 @@ enum PanConstant {
     static let pullBarEventHeight = 44.0
     static let minVelocityToStop: CGFloat = 5.0  // 停止速度阈值（点/秒）
     static let decelerationRate: CGFloat = 0.98 // 系统默认减速率
+    static let supplementThreshold = 100.0 // 惯性补充阈值
+    static let supplementRate = 5.0 // 惯性补充倍率
     static let tag = "sgx >>> scroll"
 }
 
