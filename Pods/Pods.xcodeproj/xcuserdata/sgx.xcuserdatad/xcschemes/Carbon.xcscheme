@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1500"
+   LastUpgradeVersion = "1600"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "28DBFD7C4BA62D2E2BCB62172DE80B6B"
-               BuildableName = "libCarbon.a"
+               BuildableName = "Carbon.framework"
                BlueprintName = "Carbon"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>

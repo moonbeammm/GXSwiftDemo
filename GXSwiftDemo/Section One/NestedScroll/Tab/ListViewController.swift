@@ -1,5 +1,5 @@
 //
-//  TabContainerVC.swift
+//  ListViewController.swift
 //  GXSwiftDemo
 //
 //  Created by 孙广鑫 on 2025/7/16.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TabContainerVC: UIViewController {
+class ListViewController: UIViewController {
     struct Item {
         let title: String
         let color: UIColor
@@ -18,8 +18,8 @@ class TabContainerVC: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 10
-        layout.itemSize = CGSize(width: view.frame.width, height: 150)
+        layout.minimumLineSpacing = 0
+        layout.itemSize = CGSize(width: view.frame.width, height: 80)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(NestedCell.self, forCellWithReuseIdentifier: "cell")
@@ -27,6 +27,9 @@ class TabContainerVC: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        //collectionView.contentInset = .init(top: 50, left: 0, bottom: 0, right: 0)
+        
         return collectionView
     }()
     
@@ -45,7 +48,7 @@ class TabContainerVC: UIViewController {
     }
 }
 
-extension TabContainerVC {
+extension ListViewController {
     private func setupView() {
         view.addSubview(collectionView)
         
@@ -64,9 +67,9 @@ extension TabContainerVC {
             .systemPurple, .systemYellow, .systemPink, .systemTeal
         ]
         
-        items = (1...20).map { index in
+        items = (1...30).map { index in
             Item(
-                title: "Item \(index)",
+                title: "相关推荐：\(index)",
                 color: colors.randomElement() ?? .systemGray
             )
         }
@@ -76,7 +79,7 @@ extension TabContainerVC {
 }
 
 // MARK: - UICollectionViewDataSource & UICollectionViewDelegate
-extension TabContainerVC: UICollectionViewDataSource, UICollectionViewDelegate {
+extension ListViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return items.count
     }
@@ -99,8 +102,8 @@ extension TabContainerVC: UICollectionViewDataSource, UICollectionViewDelegate {
         print("Selected: \(item.title)")
     }
 }
-extension TabContainerVC: UIScrollViewDelegate {
+extension ListViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // print("\(PanConstant.tag) on pan gesture did scroll \(scrollView.contentOffset.y)")
+        print("sgx >> scroll view did scroll \(scrollView.contentOffset.y) \(scrollView.contentInset.top)")
     }
 }

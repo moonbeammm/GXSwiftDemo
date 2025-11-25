@@ -13,6 +13,8 @@ class MockInfo {
     var videoHeight: CGFloat = 9
     var playbackState: BFCPlayerPlaybackState = .prepared
     var isFullscreen: Bool = false
+    static let canDragging: Bool = true // 是否命中下拉拖拽到story实验
+    static let hitBlackBar: Bool = true
 }
 
 enum BFCPlayerPlaybackState {
@@ -33,13 +35,27 @@ class VDDetailContainerBlocV3: UIViewController {
     /// 滑动阈值，简介向下滑动超过该阈值则进入story，否则回弹
     var pullDismissThreshod: CGFloat = -100.0
     
+    
+    
     private var lockScenes: Set<String> = Set()
     /// 滑动管理
-    lazy var scrollManager: VDDetailScrollManager = {
-        let t = VDDetailScrollManager(with: self.tabContainerVC.view)
-        tabContainerVC.view.layer.masksToBounds = true
-        tabContainerVC.view.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
-        tabContainerVC.view.layer.cornerRadius = 12
+    lazy var scrollManager: VDDetailGestureCoordinator = {
+        let t = VDDetailGestureCoordinator(with: self.tabContainerVC.view)
+        if !MockInfo.canDragging {
+            t.shouldManageScrollViewBounces = false
+        } else {
+            tabContainerVC.view.layer.masksToBounds = true
+            tabContainerVC.view.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+            tabContainerVC.view.layer.cornerRadius = 12
+        }
+        t.panGestureShouldBegin = { [weak self] in
+            guard let self = self else { return false }
+            return self.lockScenes.isEmpty
+        }
+        t.onPanGestureBeginScroll = { [weak self] in
+            guard let self = self else { return }
+            self.onPanGestureBeginScroll(self.layoutInfo)
+        }
         t.onPanGestureDidScroll = { [weak self] offset in
             guard let self = self else { return }
             self.onPanGestureDidScroll(with: offset, info: self.layoutInfo)
@@ -53,18 +69,46 @@ class VDDetailContainerBlocV3: UIViewController {
     lazy var playerVC: UIViewController = {
         let t = UIViewController()
         t.view.backgroundColor = .red
+
+        let label = UILabel()
+        label.text = "播放器区域"
+        label.textColor = .white
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        t.view.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: t.view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: t.view.centerYAnchor)
+        ])
+
         return t
     }()
     lazy var blackBar: UIView = {
         let t = UIView()
         t.backgroundColor = .black.withAlphaComponent(0.5)
+        
+        let label = UILabel()
+        label.text = "黑条"
+        label.textColor = .white
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        t.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: t.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: t.centerYAnchor)
+        ])
+        
         return t
     }()
-    lazy var tabContainerVC: TabContainerVC = {
-        let t = TabContainerVC()
-        t.view.backgroundColor = .blue
+    lazy var tabContainerBloc: TabContainerBloc = {
+        let t = TabContainerBloc()
         return t
     }()
+    var tabContainerVC: BBMPTabController {
+        tabContainerBloc.tabContainerVC
+    }
     var contentVC: UIViewController? {
         self
     }
@@ -118,8 +162,9 @@ class VDDetailContainerBlocV3: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
-        configSubviews()
+        _configSubviews()
         initialLayout()
+        tabContainerVC.bfc_reloadData()
         // 如果不调用，当前vc在第一次返回supportedInterfaceOrientations为portrait的话，后续就算更改返回值，也无法感应重力感应。
         // 因为系统不会再次询问了
         bfc_openGravity()
@@ -158,12 +203,11 @@ class VDDetailContainerBlocV3: UIViewController {
     
     override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
-        reloadLayoutType("safe area insets did change", autoExpand: true)
+        reloadLayout(with: "safe area insets did change", offset: 0.0)
     }
     
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         super.willTransition(to: newCollection, with: coordinator)
-        
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -172,10 +216,10 @@ class VDDetailContainerBlocV3: UIViewController {
         switch traitCollection.verticalSizeClass {
         case .regular:
             mockInfo.isFullscreen = false
-            reloadLayoutType("trait collection did change", autoExpand: true)
+            reloadLayout(with: "trait collection did change", offset: 0.0)
         case .compact:
             mockInfo.isFullscreen = true
-            reloadLayoutType("trait collection did change", autoExpand: true)
+            reloadLayout(with: "trait collection did change", offset: 0.0)
         default: break
         }
     }
@@ -184,42 +228,29 @@ class VDDetailContainerBlocV3: UIViewController {
 extension VDDetailContainerBlocV3 {
     public func lock(_ scene: String) {
         guard !lockScenes.contains(scene) else {
-            print("\(Constant.tag) lockScenes has contains \(scene)")
             return
         }
-        print("\(Constant.tag) lock scenes: \(scene)")
         lockScenes.insert(scene)
-        changeLayoutType(scene, toType: .horizonToHorizon, autoExpand: true)
+        reloadLayout(with: "lock scene: \(scene)", offset: 0.0)
     }
     
     public func unlock(_ scene: String, autoExpand: Bool = false) {
         lockScenes.remove(scene)
         guard lockScenes.isEmpty else {
-            print("\(Constant.tag) \(scene) unlock failed. current locks: \(lockScenes)")
             return
         }
-        print("\(Constant.tag) unlock scenes: \(scene)")
-        let to = layoutType(with: mockInfo.playbackState)
-        changeLayoutType(scene, toType: to, autoExpand: autoExpand)
+        reloadLayout(with: "unlock scene: \(scene)", offset: autoExpand ? 0.0:nil)
     }
 
-    public func changeLayoutType(_ scene: String, toType: LayoutType, autoExpand: Bool) {
-        print("\(Constant.tag) \(scene) change layout type to:\(toType) auto expand:\(autoExpand)")
-        lockScenes.removeAll()
-        changeLayoutType(to: toType, autoExpand: autoExpand)
-    }
-    
-    public func reloadLayoutType(_ scene: String, autoExpand: Bool) {
-        let offset = autoExpand ? 0.0 : scrollManager.offset
-        scrollManager.offset = offset
-        reloadConstraints(with: offset, info: layoutInfo)
+    public func reloadLayout(with scene: String, offset: CGFloat? = nil, updateCanvas: Bool = true, animation: Bool = false) {
+        let to = layoutType(with: mockInfo.playbackState)
+        _changeLayoutType(to: to, offset: offset, updateCanvas: updateCanvas, animation: animation)
     }
 }
 
 extension VDDetailContainerBlocV3 {
     private func initialLayout() {
-        let to = layoutType(with: mockInfo.playbackState)
-        changeLayoutType("initial layout", toType: to, autoExpand: true)
+        reloadLayout(with: "initial layout", offset: 0.0)
     }
     
     @objc
@@ -238,21 +269,19 @@ extension VDDetailContainerBlocV3 {
         } else if btn == fullScreenBtn {
             rotate(to: !mockInfo.isFullscreen)
         } else if btn == poperBtn {
-            showPopup()
+            if tabContainerBloc.extraBarTopMargin == 0 {
+                tabContainerBloc.extraBarTopMargin = -80
+            } else {
+                tabContainerBloc.extraBarTopMargin = 0
+            }
+            tabContainerVC.bfc_reloadExtraTab()
         }
-    }
-    
-    private func showPopup() {
-        let popupVC = PopupViewController()
-        popupVC.showPopup(in: tabContainerVC)
     }
     
     private func layoutType(with playbackState: BFCPlayerPlaybackState) -> LayoutType {
         if playbackState == .stopped {
-            // let to: LayoutType = enableFold ? .ceillingToHorizon : .horizonToHorizon
             return .horizonToHorizon
         } else if playbackState == .paused {
-            // let to: LayoutType = resolve(VDCoverBloc.self).isShowCover ? .horizonToHorizon : .ceillingToMax
             return .ceillingToMax
         } else if playbackState == .failed {
             return .horizonToHorizon
@@ -263,8 +292,8 @@ extension VDDetailContainerBlocV3 {
 }
 
 extension VDDetailContainerBlocV3 {
-    func configSubviews() {
-        _configSubviews()
+    func _configSubviews() {
+        configSubviews()
         
         view.addSubview(playingBtn)
         view.addSubview(pauseBtn)

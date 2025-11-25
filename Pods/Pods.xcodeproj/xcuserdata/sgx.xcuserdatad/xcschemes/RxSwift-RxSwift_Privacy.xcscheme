@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8FC6E51285E4FD828A61BEFD2100CD64"
-               BuildableName = "DifferenceKit.framework"
-               BlueprintName = "DifferenceKit"
+               BlueprintIdentifier = "11779BD43CF8155A53E2C00B1566A19F"
+               BuildableName = "RxSwift_Privacy.bundle"
+               BlueprintName = "RxSwift-RxSwift_Privacy"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

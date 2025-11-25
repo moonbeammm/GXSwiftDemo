@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8FC6E51285E4FD828A61BEFD2100CD64"
-               BuildableName = "DifferenceKit.framework"
-               BlueprintName = "DifferenceKit"
+               BlueprintIdentifier = "CF263AB023E40C4315ED4A97C6D7829F"
+               BuildableName = "Stevia.framework"
+               BlueprintName = "SteviaLayout"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

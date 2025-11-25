@@ -11,6 +11,8 @@
 		8E0ABFA92C1AFA640031931D /* GradientLayerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0ABFA82C1AFA640031931D /* GradientLayerVC.swift */; };
 		8E38A7C42BFF6B9000A09527 /* GXCircleVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E38A7C32BFF6B9000A09527 /* GXCircleVC.swift */; };
 		8E38A7C62BFF6B9B00A09527 /* RPCircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E38A7C52BFF6B9B00A09527 /* RPCircularProgress.swift */; };
+		8E3EE1F02ECB3ADE00433CD9 /* TabContainerItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3EE1EF2ECB3ADE00433CD9 /* TabContainerItemView.swift */; };
+		8E3EE1F22ECB476300433CD9 /* TabContainerBloc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3EE1F12ECB476300433CD9 /* TabContainerBloc.swift */; };
 		8E5FEF442BEB92DD0094BF3A /* GXSwipeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E5FEF432BEB92DD0094BF3A /* GXSwipeVC.swift */; };
 		8E5FEF462BEB96E70094BF3A /* SheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E5FEF452BEB96E70094BF3A /* SheetViewController.swift */; };
 		8E5FEF4C2BEB982F0094BF3A /* SheetContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E5FEF4B2BEB982F0094BF3A /* SheetContentViewController.swift */; };
@@ -27,6 +29,7 @@
 		8E67DFDE2BDE47C10014FDDC /* CellComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E67DFDA2BDE47C10014FDDC /* CellComponent.swift */; };
 		8E67DFDF2BDE47C10014FDDC /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E67DFDB2BDE47C10014FDDC /* ImageDownloader.swift */; };
 		8E67DFE32BDE512F0014FDDC /* HeaderComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E67DFE22BDE512F0014FDDC /* HeaderComponent.swift */; };
+		8E9A15142ECD78E700F2BE31 /* BBMPTabController+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A15132ECD78E700F2BE31 /* BBMPTabController+Layout.swift */; };
 		8EBB5F302BD1815A0029EDE1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBB5F2F2BD1815A0029EDE1 /* AppDelegate.swift */; };
 		8EBB5F322BD1815A0029EDE1 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBB5F312BD1815A0029EDE1 /* SceneDelegate.swift */; };
 		8EBB5F342BD1815A0029EDE1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBB5F332BD1815A0029EDE1 /* ViewController.swift */; };
@@ -40,15 +43,21 @@
 		8EBB5F622BD182370029EDE1 /* PointerArrayTestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBB5F602BD182370029EDE1 /* PointerArrayTestVC.swift */; };
 		8EC035EB2BEF20B3007B0102 /* ArrayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC035EA2BEF20B3007B0102 /* ArrayTests.swift */; };
 		8ED8732E2C47C35F00835F13 /* GXStackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED8732D2C47C35F00835F13 /* GXStackVC.swift */; };
+		8EFA17A32ECB207E00DE4D09 /* BBMPTabConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA179E2ECB207D00DE4D09 /* BBMPTabConfig.swift */; };
+		8EFA17A42ECB207E00DE4D09 /* BBMPTabScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA17A12ECB207D00DE4D09 /* BBMPTabScrollView.swift */; };
+		8EFA17A52ECB207E00DE4D09 /* BBMPTabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA17A02ECB207D00DE4D09 /* BBMPTabItem.swift */; };
+		8EFA17A62ECB207E00DE4D09 /* BBMPPageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA179C2ECB207D00DE4D09 /* BBMPPageScrollView.swift */; };
+		8EFA17A72ECB207E00DE4D09 /* BBMPTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA179F2ECB207D00DE4D09 /* BBMPTabController.swift */; };
+		8EFA17A82ECB207E00DE4D09 /* BBMPScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA179D2ECB207D00DE4D09 /* BBMPScrollView.swift */; };
 		8EFD969E2BD555A500744E8D /* StringCountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD969D2BD555A500744E8D /* StringCountTests.swift */; };
 		B7037DB52D13CD45006335AF /* ExpandLabelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7037DB42D13CD45006335AF /* ExpandLabelVC.swift */; };
 		B71516AB2E37AC2C0043A156 /* NestedScrollVC+Scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71516AA2E37AC2C0043A156 /* NestedScrollVC+Scroll.swift */; };
 		B7288A0C2E387947002C1169 /* Rotate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7288A0B2E387947002C1169 /* Rotate.swift */; };
 		B73393E62D96C02B00DCE5D6 /* CollectionViewDiffableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73393E52D96C02B00DCE5D6 /* CollectionViewDiffableVC.swift */; };
 		B74950722E26991800697353 /* NestedScrollVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74950712E26991800697353 /* NestedScrollVC.swift */; };
-		B74950742E27B1E900697353 /* TabContainerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74950732E27B1E900697353 /* TabContainerVC.swift */; };
+		B74950742E27B1E900697353 /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74950732E27B1E900697353 /* ListViewController.swift */; };
 		B74950762E27BAFF00697353 /* NestedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74950752E27BAFF00697353 /* NestedCell.swift */; };
-		B74950782E27BBD700697353 /* VDDetailScrollManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74950772E27BBD700697353 /* VDDetailScrollManager.swift */; };
+		B74950782E27BBD700697353 /* VDDetailGestureCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74950772E27BBD700697353 /* VDDetailGestureCoordinator.swift */; };
 		B75D6C1A2DA7FC2800860424 /* ProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75D6C192DA7FC2800860424 /* ProtocolTests.swift */; };
 		B774BD4D2DD0BBBD0022BC93 /* CalendarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B774BD4C2DD0BBBD0022BC93 /* CalendarTests.swift */; };
 		B77BFE602DCE045100729E82 /* FSCalendarCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B77BFE582DCE045100729E82 /* FSCalendarCollectionView.swift */; };
@@ -65,7 +74,6 @@
 		B77BFE6B2DCE045100729E82 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B77BFE5C2DCE045100729E82 /* UIView+Extension.swift */; };
 		B77BFE6C2DCE045100729E82 /* FSCalendarAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = B77BFE552DCE045100729E82 /* FSCalendarAppearance.swift */; };
 		B77BFE6D2DCE045100729E82 /* Calendar+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B77BFE502DCE045100729E82 /* Calendar+Extension.swift */; };
-		B79F889E2E4A09BC0008C019 /* PopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79F889D2E4A09BC0008C019 /* PopupViewController.swift */; };
 		B7A844C82CF5B477001990D3 /* VKCheckmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A844C72CF5B477001990D3 /* VKCheckmarkView.swift */; };
 		B7DBC8722D3BD3C7005518F4 /* CenterListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7DBC8712D3BD3C7005518F4 /* CenterListVC.swift */; };
 		B7E221E22D2A9DCC000B1F82 /* ServerTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7E221E12D2A9DCC000B1F82 /* ServerTime.swift */; };
@@ -93,6 +101,8 @@
 		8E0ABFA82C1AFA640031931D /* GradientLayerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientLayerVC.swift; sourceTree = "<group>"; };
 		8E38A7C32BFF6B9000A09527 /* GXCircleVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GXCircleVC.swift; sourceTree = "<group>"; };
 		8E38A7C52BFF6B9B00A09527 /* RPCircularProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RPCircularProgress.swift; sourceTree = "<group>"; };
+		8E3EE1EF2ECB3ADE00433CD9 /* TabContainerItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabContainerItemView.swift; sourceTree = "<group>"; };
+		8E3EE1F12ECB476300433CD9 /* TabContainerBloc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabContainerBloc.swift; sourceTree = "<group>"; };
 		8E5FEF432BEB92DD0094BF3A /* GXSwipeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GXSwipeVC.swift; sourceTree = "<group>"; };
 		8E5FEF452BEB96E70094BF3A /* SheetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SheetViewController.swift; sourceTree = "<group>"; };
 		8E5FEF4B2BEB982F0094BF3A /* SheetContentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SheetContentViewController.swift; sourceTree = "<group>"; };
@@ -111,6 +121,7 @@
 		8E67DFDA2BDE47C10014FDDC /* CellComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellComponent.swift; sourceTree = "<group>"; };
 		8E67DFDB2BDE47C10014FDDC /* ImageDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
 		8E67DFE22BDE512F0014FDDC /* HeaderComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderComponent.swift; sourceTree = "<group>"; };
+		8E9A15132ECD78E700F2BE31 /* BBMPTabController+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BBMPTabController+Layout.swift"; sourceTree = "<group>"; };
 		8EBB5F2C2BD1815A0029EDE1 /* GXSwiftDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GXSwiftDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8EBB5F2F2BD1815A0029EDE1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8EBB5F312BD1815A0029EDE1 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -128,15 +139,21 @@
 		8EBB5F602BD182370029EDE1 /* PointerArrayTestVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointerArrayTestVC.swift; sourceTree = "<group>"; };
 		8EC035EA2BEF20B3007B0102 /* ArrayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayTests.swift; sourceTree = "<group>"; };
 		8ED8732D2C47C35F00835F13 /* GXStackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GXStackVC.swift; sourceTree = "<group>"; };
+		8EFA179C2ECB207D00DE4D09 /* BBMPPageScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BBMPPageScrollView.swift; sourceTree = "<group>"; };
+		8EFA179D2ECB207D00DE4D09 /* BBMPScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BBMPScrollView.swift; sourceTree = "<group>"; };
+		8EFA179E2ECB207D00DE4D09 /* BBMPTabConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BBMPTabConfig.swift; sourceTree = "<group>"; };
+		8EFA179F2ECB207D00DE4D09 /* BBMPTabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BBMPTabController.swift; sourceTree = "<group>"; };
+		8EFA17A02ECB207D00DE4D09 /* BBMPTabItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BBMPTabItem.swift; sourceTree = "<group>"; };
+		8EFA17A12ECB207D00DE4D09 /* BBMPTabScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BBMPTabScrollView.swift; sourceTree = "<group>"; };
 		8EFD969D2BD555A500744E8D /* StringCountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringCountTests.swift; sourceTree = "<group>"; };
 		B7037DB42D13CD45006335AF /* ExpandLabelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandLabelVC.swift; sourceTree = "<group>"; };
 		B71516AA2E37AC2C0043A156 /* NestedScrollVC+Scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NestedScrollVC+Scroll.swift"; sourceTree = "<group>"; };
 		B7288A0B2E387947002C1169 /* Rotate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rotate.swift; sourceTree = "<group>"; };
 		B73393E52D96C02B00DCE5D6 /* CollectionViewDiffableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewDiffableVC.swift; sourceTree = "<group>"; };
 		B74950712E26991800697353 /* NestedScrollVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestedScrollVC.swift; sourceTree = "<group>"; };
-		B74950732E27B1E900697353 /* TabContainerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabContainerVC.swift; sourceTree = "<group>"; };
+		B74950732E27B1E900697353 /* ListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
 		B74950752E27BAFF00697353 /* NestedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestedCell.swift; sourceTree = "<group>"; };
-		B74950772E27BBD700697353 /* VDDetailScrollManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VDDetailScrollManager.swift; sourceTree = "<group>"; };
+		B74950772E27BBD700697353 /* VDDetailGestureCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VDDetailGestureCoordinator.swift; sourceTree = "<group>"; };
 		B75D6C192DA7FC2800860424 /* ProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolTests.swift; sourceTree = "<group>"; };
 		B774BD4C2DD0BBBD0022BC93 /* CalendarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarTests.swift; sourceTree = "<group>"; };
 		B77BFE502DCE045100729E82 /* Calendar+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Calendar+Extension.swift"; sourceTree = "<group>"; };
@@ -153,7 +170,6 @@
 		B77BFE5B2DCE045100729E82 /* FSCalendarWeekdayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSCalendarWeekdayView.swift; sourceTree = "<group>"; };
 		B77BFE5C2DCE045100729E82 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		B77BFE5E2DCE045100729E82 /* CalendarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarVC.swift; sourceTree = "<group>"; };
-		B79F889D2E4A09BC0008C019 /* PopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupViewController.swift; sourceTree = "<group>"; };
 		B7A844C72CF5B477001990D3 /* VKCheckmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VKCheckmarkView.swift; sourceTree = "<group>"; };
 		B7DBC8712D3BD3C7005518F4 /* CenterListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterListVC.swift; sourceTree = "<group>"; };
 		B7E221E12D2A9DCC000B1F82 /* ServerTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTime.swift; sourceTree = "<group>"; };
@@ -203,6 +219,17 @@
 				B7A844C72CF5B477001990D3 /* VKCheckmarkView.swift */,
 			);
 			path = Circle;
+			sourceTree = "<group>";
+		};
+		8E3EE1EE2ECB38D400433CD9 /* Tab */ = {
+			isa = PBXGroup;
+			children = (
+				B74950752E27BAFF00697353 /* NestedCell.swift */,
+				B74950732E27B1E900697353 /* ListViewController.swift */,
+				8E3EE1EF2ECB3ADE00433CD9 /* TabContainerItemView.swift */,
+				8E3EE1F12ECB476300433CD9 /* TabContainerBloc.swift */,
+			);
+			path = Tab;
 			sourceTree = "<group>";
 		};
 		8E5FEF1E2BEB8F740094BF3A /* Swip */ = {
@@ -324,6 +351,7 @@
 				8E5FEF1E2BEB8F740094BF3A /* Swip */,
 				8E67DFE02BDE48440014FDDC /* CarbonVC */,
 				B77BFE5F2DCE045100729E82 /* Calendar */,
+				8EFA17A22ECB207D00DE4D09 /* TabController */,
 				8EBB5F5F2BD182370029EDE1 /* LargeButtonTestVC.swift */,
 				8EBB5F602BD182370029EDE1 /* PointerArrayTestVC.swift */,
 				8E67DF6F2BDE1E370014FDDC /* ResultBuilderVC.swift */,
@@ -340,6 +368,20 @@
 			path = StackView;
 			sourceTree = "<group>";
 		};
+		8EFA17A22ECB207D00DE4D09 /* TabController */ = {
+			isa = PBXGroup;
+			children = (
+				8EFA179C2ECB207D00DE4D09 /* BBMPPageScrollView.swift */,
+				8EFA179D2ECB207D00DE4D09 /* BBMPScrollView.swift */,
+				8EFA179E2ECB207D00DE4D09 /* BBMPTabConfig.swift */,
+				8EFA179F2ECB207D00DE4D09 /* BBMPTabController.swift */,
+				8E9A15132ECD78E700F2BE31 /* BBMPTabController+Layout.swift */,
+				8EFA17A02ECB207D00DE4D09 /* BBMPTabItem.swift */,
+				8EFA17A12ECB207D00DE4D09 /* BBMPTabScrollView.swift */,
+			);
+			path = TabController;
+			sourceTree = "<group>";
+		};
 		B73393E42D96C00F00DCE5D6 /* CollectionViewDiffable */ = {
 			isa = PBXGroup;
 			children = (
@@ -351,12 +393,10 @@
 		B74950702E2698FF00697353 /* NestedScroll */ = {
 			isa = PBXGroup;
 			children = (
+				8E3EE1EE2ECB38D400433CD9 /* Tab */,
 				B74950712E26991800697353 /* NestedScrollVC.swift */,
-				B79F889D2E4A09BC0008C019 /* PopupViewController.swift */,
 				B71516AA2E37AC2C0043A156 /* NestedScrollVC+Scroll.swift */,
-				B74950732E27B1E900697353 /* TabContainerVC.swift */,
-				B74950772E27BBD700697353 /* VDDetailScrollManager.swift */,
-				B74950752E27BAFF00697353 /* NestedCell.swift */,
+				B74950772E27BBD700697353 /* VDDetailGestureCoordinator.swift */,
 			);
 			path = NestedScroll;
 			sourceTree = "<group>";
@@ -588,7 +628,6 @@
 			files = (
 				B77BFE602DCE045100729E82 /* FSCalendarCollectionView.swift in Sources */,
 				B77BFE612DCE045100729E82 /* CalendarVC.swift in Sources */,
-				B79F889E2E4A09BC0008C019 /* PopupViewController.swift in Sources */,
 				B77BFE622DCE045100729E82 /* FSCalendarCalculator.swift in Sources */,
 				B74950762E27BAFF00697353 /* NestedCell.swift in Sources */,
 				B77BFE632DCE045100729E82 /* FSCalendar.swift in Sources */,
@@ -608,10 +647,11 @@
 				8E5FEF592BEC7B480094BF3A /* SheetViewController+Config.swift in Sources */,
 				8EBB5F342BD1815A0029EDE1 /* ViewController.swift in Sources */,
 				B7A844C82CF5B477001990D3 /* VKCheckmarkView.swift in Sources */,
-				B74950782E27BBD700697353 /* VDDetailScrollManager.swift in Sources */,
+				B74950782E27BBD700697353 /* VDDetailGestureCoordinator.swift in Sources */,
 				B7DBC8722D3BD3C7005518F4 /* CenterListVC.swift in Sources */,
 				8E38A7C42BFF6B9000A09527 /* GXCircleVC.swift in Sources */,
 				8E67DFDD2BDE47C10014FDDC /* GroupModel.swift in Sources */,
+				8E3EE1F02ECB3ADE00433CD9 /* TabContainerItemView.swift in Sources */,
 				B74950722E26991800697353 /* NestedScrollVC.swift in Sources */,
 				8E67DF782BDE361F0014FDDC /* CarbonVC.swift in Sources */,
 				8E5FEF5B2BEC7CC00094BF3A /* SheetViewController+Animation.swift in Sources */,
@@ -626,12 +666,20 @@
 				B7037DB52D13CD45006335AF /* ExpandLabelVC.swift in Sources */,
 				B73393E62D96C02B00DCE5D6 /* CollectionViewDiffableVC.swift in Sources */,
 				8E67DF702BDE1E370014FDDC /* ResultBuilderVC.swift in Sources */,
-				B74950742E27B1E900697353 /* TabContainerVC.swift in Sources */,
+				8E3EE1F22ECB476300433CD9 /* TabContainerBloc.swift in Sources */,
+				B74950742E27B1E900697353 /* ListViewController.swift in Sources */,
 				8E67DFDF2BDE47C10014FDDC /* ImageDownloader.swift in Sources */,
 				8E5FEF4C2BEB982F0094BF3A /* SheetContentViewController.swift in Sources */,
 				8EBB5F622BD182370029EDE1 /* PointerArrayTestVC.swift in Sources */,
 				8E5FEF612BEC80810094BF3A /* SheetViewController+Size.swift in Sources */,
 				8E5FEF572BEC7A690094BF3A /* SheetViewController+Subviews.swift in Sources */,
+				8EFA17A32ECB207E00DE4D09 /* BBMPTabConfig.swift in Sources */,
+				8EFA17A42ECB207E00DE4D09 /* BBMPTabScrollView.swift in Sources */,
+				8EFA17A52ECB207E00DE4D09 /* BBMPTabItem.swift in Sources */,
+				8E9A15142ECD78E700F2BE31 /* BBMPTabController+Layout.swift in Sources */,
+				8EFA17A62ECB207E00DE4D09 /* BBMPPageScrollView.swift in Sources */,
+				8EFA17A72ECB207E00DE4D09 /* BBMPTabController.swift in Sources */,
+				8EFA17A82ECB207E00DE4D09 /* BBMPScrollView.swift in Sources */,
 				8E0ABFA92C1AFA640031931D /* GradientLayerVC.swift in Sources */,
 				8E67DFDC2BDE47C10014FDDC /* Decoder.swift in Sources */,
 				8EBB5F322BD1815A0029EDE1 /* SceneDelegate.swift in Sources */,
@@ -823,7 +871,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = VEE3B6HDQ5;
+				DEVELOPMENT_TEAM = T3R82QQDQ5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -861,7 +909,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = VEE3B6HDQ5;
+				DEVELOPMENT_TEAM = T3R82QQDQ5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

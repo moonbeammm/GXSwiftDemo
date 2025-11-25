@@ -28,8 +28,6 @@ class NestedCell: UICollectionViewCell {
     
     private func setupCell() {
         contentView.addSubview(titleLabel)
-        contentView.layer.cornerRadius = 10
-        contentView.layer.masksToBounds = true
         
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),

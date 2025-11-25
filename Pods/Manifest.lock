@@ -8,7 +8,7 @@ PODS:
   - RxRelay (6.9.0):
     - RxSwift (= 6.9.0)
   - RxSwift (6.9.0)
-  - SteviaLayout (5.1.2)
+  - SteviaLayout (6.2.2)
 
 DEPENDENCIES:
   - "Carbon (from `git@git.bilibili.co:app-public/carbon.git`, tag `bl-1.0.0-rc.7`)"
@@ -41,7 +41,7 @@ SPEC CHECKSUMS:
   RxCocoa: ac16414696ae706516be3e1ab00fcce5bdc9be8a
   RxRelay: 6b0c930e5cef57d5fe2032571e5e65b78e3cbdb1
   RxSwift: 31649ace6aceeb422e16ff71c60804f9c3281ed9
-  SteviaLayout: 05424e528d643657d39ce72c786e4adf13cfc5f2
+  SteviaLayout: c85f591c5af5f0b3883d904984b7d41e15b4e582
 
 PODFILE CHECKSUM: 7606883940c203619d87050608fe641271ddf6f7
 
