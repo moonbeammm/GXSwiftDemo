@@ -104,6 +104,6 @@ extension ListViewController: UICollectionViewDataSource, UICollectionViewDelega
 }
 extension ListViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("sgx >> scroll view did scroll \(scrollView.contentOffset.y) \(scrollView.contentInset.top)")
+        //print("sgx >> scroll view did scroll \(scrollView.contentOffset.y) \(scrollView.contentInset.top)")
     }
 }

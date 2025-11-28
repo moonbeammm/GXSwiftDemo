@@ -332,5 +332,18 @@ extension BBMPTabController {
         ]
         NSLayoutConstraint.activate(containerConstraints)
     }
-    
+
+    // ✅ 公开方法：用于ExtraTab动画时更新container的topMargin
+    func bfc_updateContainerTopMargin(_ topConstant: CGFloat, animated: Bool = false) {
+        updateContainer(topConstant: topConstant)
+
+        if animated {
+            UIView.animate(withDuration: 0.25) {
+                self.contentView.layoutIfNeeded()
+            }
+        } else {
+            contentView.layoutIfNeeded()
+        }
+    }
+
 }

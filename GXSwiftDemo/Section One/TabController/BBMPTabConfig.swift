@@ -21,6 +21,29 @@ class BBMPExtraTabConfig: NSObject {
     var animation: Bool = false
     var delay: CGFloat = 0
     var animationDuration: CGFloat = 0
+
+    // ✅ ExtraTab动画生命周期回调
+    /// 即将开始收起动画
+    /// - Parameter duration: 动画时长
+    var onWillCollapse: ((TimeInterval) -> Void)?
+
+    /// 收起动画完成
+    /// - Parameter finished: 动画是否正常完成（false表示被中断）
+    var onDidCollapse: ((Bool) -> Void)?
+
+    /// 即将开始展开动画
+    /// - Parameter duration: 动画时长
+    var onWillExpand: ((TimeInterval) -> Void)?
+
+    /// 展开动画完成
+    /// - Parameter finished: 动画是否正常完成
+    var onDidExpand: ((Bool) -> Void)?
+
+    /// 动画进度回调（可选，用于更精细的控制）
+    /// - Parameters:
+    ///   - progress: 动画进度 0.0 ~ 1.0
+    ///   - isCollapsing: true表示收起动画，false表示展开动画
+    var onAnimationProgress: ((CGFloat, Bool) -> Void)?
 }
 
 class BBMPBottomTabConfig: NSObject {

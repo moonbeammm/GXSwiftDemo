@@ -29,7 +29,8 @@ class TabContainerBloc: NSObject {
         return t
     }()
     
-    var extraTabView: UIView = {
+    var extraTabView: UIView?
+    func createExtraTabView() -> UIView {
         let t = UIView()
         t.backgroundColor = .yellow.withAlphaComponent(0.5)
         
@@ -44,9 +45,8 @@ class TabContainerBloc: NSObject {
             label.centerXAnchor.constraint(equalTo: t.centerXAnchor),
             label.centerYAnchor.constraint(equalTo: t.centerYAnchor)
         ])
-        
         return t
-    }()
+    }
     lazy var tabContainerVC: BBMPTabController = {
         let t = BBMPTabController()
         t.view.backgroundColor = .blue
@@ -85,6 +85,7 @@ extension TabContainerBloc: BBMPTabControllerDelegate, BBMPTabControllerDataSour
     }
     
     func bfc_extraTabView(in tabController: BBMPTabController) -> UIView? {
+        extraTabView = createExtraTabView()
         return extraTabView
     }
     
@@ -93,6 +94,41 @@ extension TabContainerBloc: BBMPTabControllerDelegate, BBMPTabControllerDataSour
         t.topMargin = extraBarTopMargin
         t.height = 80
         t.animation = true
+
+        // ✅ 设置动画回调（业务方示例）
+        t.onWillCollapse = { duration in
+            print("📤 ExtraTab 即将收起，动画时长: \(duration)s")
+            // 业务逻辑：比如暂停广告视频播放
+            // self.adPlayer?.pause()
+        }
+
+        t.onDidCollapse = { finished in
+            print("✅ ExtraTab 收起完成，finished: \(finished)")
+            // 业务逻辑：比如释放广告资源
+            // self.adPlayer?.stop()
+            // self.adPlayer = nil
+        }
+
+        t.onWillExpand = { duration in
+            print("📥 ExtraTab 即将展开，动画时长: \(duration)s")
+            // 业务逻辑：比如预加载广告
+            // self.loadAdIfNeeded()
+        }
+
+        t.onDidExpand = { finished in
+            print("✅ ExtraTab 展开完成，finished: \(finished)")
+            // 业务逻辑：比如开始播放广告
+            // self.adPlayer?.play()
+        }
+
+        // ✅ 可选：监听动画进度
+        t.onAnimationProgress = { progress, isCollapsing in
+            let action = isCollapsing ? "收起" : "展开"
+            print("📊 ExtraTab \(action)进度: \(Int(progress * 100))%")
+            // 业务逻辑：比如根据进度调整透明度
+            // self.extraTabView?.alpha = isCollapsing ? (1.0 - progress) : progress
+        }
+
         return t
     }
     
