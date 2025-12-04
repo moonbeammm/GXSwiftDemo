@@ -106,7 +106,10 @@ class VDDetailGestureCoordinator: NSObject {
     
     /// ScrollView bounce状态保存映射表
     private var scrollViewBouncesMap: [Int: Bool] = [:]
-    
+
+    /// ScrollView KVO observations 映射表
+    private var scrollViewObservations: [Int: NSKeyValueObservation] = [:]
+
     /// 惯性动画显示链接
     private var displayLink: CADisplayLink?
     
@@ -137,6 +140,15 @@ class VDDetailGestureCoordinator: NSObject {
     
     /// 手势结束时的回调 (参数: 最终偏移量, 结束时的速度)
     var onPanGestureEndScroll: ((_ offset: CGFloat, _ velocity: CGFloat) -> Void)?
+
+    var enableReachMaxOffset: Bool = true
+    /// ✅ 向上滑动到达最大offset时的回调（用于触发ExtraTab收起）
+    /// - Returns: 是否拦截后续滚动（true=拦截，false=不拦截）
+    var onReachMaxOffsetWhileScrollingUp: (() -> Bool)?
+
+    /// ✅ 向下滑动到达最大offset时的回调（用于触发ExtraTab展开）
+    /// - Returns: 是否拦截后续滚动（true=拦截，false=不拦截）
+    var onReachMaxOffsetWhileScrollingDown: (() -> Bool)?
 
     internal var childKeyValueObservations: [Int: NSKeyValueObservation] = [:]
     // MARK: - Initialization
@@ -190,7 +202,8 @@ extension VDDetailGestureCoordinator {
             let direction: ScrollDirection = deltaY > 0 ? .down : .up
             let targetOffset = self.offset - deltaY
             
-            coordinateScrolling(targetOffset: targetOffset, direction: direction, source: .userPan)
+            let velocity = gesture.velocity(in: gesture.view?.superview).y
+            coordinateScrolling(targetOffset: targetOffset, direction: direction, source: .userPan, velocity: velocity)
             lastTouchPoint = translation
             
         default: // .ended, .cancelled, .failed
@@ -210,6 +223,13 @@ extension VDDetailGestureCoordinator {
         stopInertialAnimation()
         // 重置触摸点
         lastTouchPoint = CGPoint.zero
+
+        // ✅ 立即无条件保存所有ScrollView偏移量，防止闪烁
+        // 后续在handleUpwardScrolling/handleDownwardScrolling中判断是否需要恢复
+        saveScrollViewOffsets()
+
+        // ✅ 添加 KVO 监听，实时恢复 ScrollView offset
+        addScrollViewKVO()
     }
     
     /**
@@ -217,7 +237,7 @@ extension VDDetailGestureCoordinator {
      * @param velocity 手势结束时的速度
      */
     private func handlePanGestureEnded(velocity: CGFloat) {
-        let shouldStartInertial = offset > 0 && abs(velocity) > Configuration.Gesture.minimumVelocityForInertial
+        let shouldStartInertial = offset >= 0 && abs(velocity) > Configuration.Gesture.minimumVelocityForInertial
         
         if shouldStartInertial {
             startInertialAnimation(initialVelocity: velocity)
@@ -263,12 +283,12 @@ extension VDDetailGestureCoordinator {
      * @param direction 滚动方向
      * @param source 滚动来源（用户手势/惯性动画）
      */
-    private func coordinateScrolling(targetOffset: CGFloat, direction: ScrollDirection, source: ScrollSource) {
+    private func coordinateScrolling(targetOffset: CGFloat, direction: ScrollDirection, source: ScrollSource, velocity: CGFloat? = nil) {
         switch direction {
         case .up:
-            handleUpwardScrolling(targetOffset: targetOffset, source: source)
+            handleUpwardScrolling(targetOffset: targetOffset, source: source, velocity: velocity)
         case .down:
-            handleDownwardScrolling(targetOffset: targetOffset, source: source)
+            handleDownwardScrolling(targetOffset: targetOffset, source: source, velocity: velocity)
         case .none:
             break
         }
@@ -276,66 +296,90 @@ extension VDDetailGestureCoordinator {
     
     /**
      * 处理向上滑动逻辑
-     * 策略：优先调整容器偏移量，到达边界后允许ScrollView滚动
+     * 策略：优先调整容器偏移量，到达边界后允许ScrollView滚动或触发ExtraTab收起
      */
-    private func handleUpwardScrolling(targetOffset: CGFloat, source: ScrollSource) {
-        // VKLogInfo(.common, .layout, "向上滑动协调 - 目标偏移: \(targetOffset), 方向: up, 范围: \(offsetRange.min) <-> \(offsetRange.max)")
-        print("sgx >> scroll view did scroll222")
-
-
-        // 如果启用了 bounces 管理且内部ScrollView还没有滚动到顶部，恢复其bounce效果
-        if shouldManageScrollViewBounces && !isAllScrollViewsAtTop() {
-            restoreScrollViewBounces()
+    private func handleUpwardScrolling(targetOffset: CGFloat, source: ScrollSource, velocity: CGFloat?) {
+        // 启用bounces管理，向上滑动时则恢复ScrollView的bounce效果，防止上拉加载更多的功能失效
+        if shouldManageScrollViewBounces {
+            recoverScrollViewBounces()
         }
         
-        if !isAllScrollViewsSafe() {
+        // 保证所有scrollView offset都在安全区内
+        guard !hasScrollViewsBeyondTop() else {
+            clearScrollViewOffsets()
             return
         }
-
         // 保存ScrollView当前偏移量（首次保存）
         if scrollViewOffsetMap.isEmpty {
             saveScrollViewOffsets()
         }
 
-        // 更新容器偏移量
+        // 阶段一：优先收起offset -> max
         updateContainerOffset(targetOffset)
-
-        // 如果容器还未到达边界，重置ScrollView偏移量到保存的位置
-        //print("sgx >>> offset:\(offset) rangemax:\(offsetRange.max)")
-        if offset < offsetRange.max {
-            restoreScrollViewOffsets()
+        // offset还未到max前都需要scrollView保持当前offset
+        guard offset >= offsetRange.max else {
+            return
+        }
+        
+        if enableReachMaxOffset {
+            // 阶段二：业务方定义区域滚动
+            let shouldIntercept = onReachMaxOffsetWhileScrollingUp?() ?? false
+            
+            // 阶段二还未完成则直接return
+            guard !shouldIntercept else {
+                return
+            }
+            // 阶段三：允许scrollView滚动
+            clearScrollViewOffsets()
+        } else {
+            // 阶段二：允许scrollView滚动
+            clearScrollViewOffsets()
         }
     }
     
-    
-    
     /**
      * 处理向下滑动逻辑
-     * 策略：ScrollView在顶部时，优先调整容器偏移量；否则优先滚动ScrollView
+     * 策略：ScrollView在顶部时，先触发ExtraTab展开，再调整容器偏移量；否则优先滚动ScrollView
      */
-    private func handleDownwardScrolling(targetOffset: CGFloat, source: ScrollSource) {
-        // 如果启用了 bounces 管理，禁用ScrollView的bounce效果，防止下拉时出现空白
+    private func handleDownwardScrolling(targetOffset: CGFloat, source: ScrollSource, velocity: CGFloat?) {
+        // 启用bounces管理，向下滑动时则禁用ScrollView的bounce效果，防止下拉时出现空白
         if shouldManageScrollViewBounces {
             disableScrollViewBounces()
         }
+        
         // 清除保存的偏移量映射
         clearScrollViewOffsets()
-
-        // VKLogInfo(.common, .layout, "向下滑动协调 - 目标偏移: \(targetOffset), 方向: down, 所有ScrollView在顶部: \(isAllScrollViewsAtTop()), 范围: \(offsetRange.min) <-> \(offsetRange.max)")
-
-        if isAllScrollViewsAtTop() {
-            // ScrollView已经在顶部，开始调整容器偏移量
-            updateContainerOffset(targetOffset)
-            // 如果启用了 bounces 管理，保持ScrollView在顶部位置
-            if shouldManageScrollViewBounces {
-                keepScrollViewsAtTop()
-            } else {
-                if offset > offsetRange.min {
-                    keepScrollViewsAtTop()
-                }
-            }
+        
+        // 阶段一：优先scrollView滚动到顶部
+        guard isAllScrollViewsAtTop() else {
+            return
         }
-        // 如果ScrollView不在顶部，则不更新容器偏移量，让ScrollView自然滚动
+        
+        // offset还未到min前都需要保持scrollView在顶部
+        if offset > offsetRange.min {
+            keepScrollViewsAtTop()
+        }
+        
+        if enableReachMaxOffset {
+            // 阶段二：优先展开offset -> 0
+            if offset >= 0 {
+                updateContainerOffset(targetOffset)
+            }
+            // 阶段二还未完成则直接return
+            guard offset <= 0 else {
+                return
+            }
+            // 阶段三：业务方定义区域滚动
+            let shouldIntercept = onReachMaxOffsetWhileScrollingDown?() ?? false
+            guard !shouldIntercept else {
+                return
+            }
+            // 阶段四：展开offset -> min
+            updateContainerOffset(targetOffset)
+        } else {
+            // 阶段二：展开offset -> min
+            updateContainerOffset(targetOffset)
+        }
     }
     
     /**
@@ -377,6 +421,7 @@ extension VDDetailGestureCoordinator {
         if currentState == .inertialAnimation {
             currentState = .idle
         }
+        
     }
 
     /**
@@ -405,23 +450,39 @@ extension VDDetailGestureCoordinator {
         
         let direction: ScrollDirection = deltaOffset > 0 ? .down : .up
         let targetOffset = min(max(self.offset - deltaOffset, 0), offsetRange.max)
-        
-        // VKLogInfo(.common, .layout, "惯性动画步进 - 速度:\(inertialVelocity) 增量:\(deltaOffset) 方向:\(direction) 目标偏移:\(targetOffset)")
-        
+
+//        print("惯性动画步进 - 速度:\(inertialVelocity) 增量:\(deltaOffset) 方向:\(direction) 目标偏移:\(targetOffset)")
+
         // 3. 检查停止条件
         let reachedBoundary = (direction == .down && targetOffset <= 0) ||
                              (direction == .up && targetOffset >= offsetRange.max)
         let velocityTooLow = abs(inertialVelocity) < Configuration.InertialAnimation.minimumVelocityThreshold
-        
-        if reachedBoundary {
-            coordinateScrolling(targetOffset: targetOffset, direction: direction, source: .inertial)
-            finishInertialAnimation("到达边界")
-            return
-        } else if velocityTooLow {
+
+        if velocityTooLow {
             finishInertialAnimation("速度过低")
             return
+        } else if reachedBoundary {
+            coordinateScrolling(targetOffset: targetOffset, direction: direction, source: .inertial)
+            if enableReachMaxOffset {
+                let isAllTop = isAllScrollViewsAtTop()
+                // 到达offset max or min边界，优先业务方自定义区域处理
+                var shouldIntercept: Bool = true
+                if direction == .down, isAllTop {
+                    shouldIntercept = onReachMaxOffsetWhileScrollingDown?() ?? false
+                } else if direction == .up, isAllTop {
+                    shouldIntercept = onReachMaxOffsetWhileScrollingUp?() ?? false
+                }
+                if !shouldIntercept {
+                    // 被拦截，停止惯性动画
+                    finishInertialAnimation("ExtraTab收起动画触发")
+                }
+                return
+            } else {
+                finishInertialAnimation("到达边界")
+                return
+            }
         }
-        
+
         // 4. 更新偏移量
         coordinateScrolling(targetOffset: targetOffset, direction: direction, source: .inertial)
     }
@@ -460,8 +521,9 @@ extension VDDetailGestureCoordinator {
     private func clearScrollViewObservation() {
         // VKLogInfo(.common, .layout, "清除所有ScrollView观察: \(observedViews.allObjects)")
         clearScrollViewOffsets()
-        restoreScrollViewBounces()
+        recoverScrollViewBounces()
         clearScrollViewBounces()
+        removeScrollViewKVO()
         observedViews = NSPointerArray.weakObjects()
     }
     
@@ -487,6 +549,17 @@ extension VDDetailGestureCoordinator {
     }
     
     /**
+     * 保持所有ScrollView在顶部位置
+     */
+    private func keepScrollViewsAtTop() {
+        guard let scrollViews = observedViews.allObjects as? [UIScrollView] else { return }
+        
+        for scrollView in scrollViews {
+            scrollView.contentOffset.y = -scrollView.contentInset.top
+        }
+    }
+    
+    /**
      * 禁用所有ScrollView的bounce效果
      * 用于向下拖拽时防止出现空白区域
      */
@@ -501,7 +574,7 @@ extension VDDetailGestureCoordinator {
     /**
      * 恢复所有ScrollView的bounce状态
      */
-    private func restoreScrollViewBounces() {
+    private func recoverScrollViewBounces() {
         guard let scrollViews = observedViews.allObjects as? [UIScrollView],
               !scrollViewBouncesMap.isEmpty else { return }
         
@@ -512,6 +585,51 @@ extension VDDetailGestureCoordinator {
                 scrollView.bounces = originalBounces
             }
         }
+    }
+
+    // MARK: ScrollView KVO Management
+
+    /**
+     * 添加 KVO 监听所有 ScrollView 的 contentOffset
+     * 实时恢复偏移量，防止闪烁
+     */
+    private func addScrollViewKVO() {
+        guard let scrollViews = observedViews.allObjects as? [UIScrollView] else { return }
+        // 先清除旧的监听
+        removeScrollViewKVO()
+        
+        print("add scrollview kvo")
+        for scrollView in scrollViews {
+            let key = scrollView.hashValue
+            guard scrollViewOffsetMap[key] != nil else { continue }
+
+            // 添加 KVO 监听
+            let observation = scrollView.observe(\.contentOffset, options: [.new]) { [weak self] scrollView, change in
+                guard let self = self,
+                      let newOffset = change.newValue?.y,
+                      let savedOffset = self.scrollViewOffsetMap[key] else {
+                    return
+                }
+
+                // 如果 offset 发生变化，立即恢复到保存的值
+                if abs(newOffset - savedOffset) > 0.1 {
+                    print("reset offset \(savedOffset)")
+                    scrollView.contentOffset.y = savedOffset
+                }
+            }
+
+            scrollViewObservations[key] = observation
+        }
+    }
+
+    /**
+     * 移除所有 ScrollView 的 KVO 监听
+     */
+    private func removeScrollViewKVO() {
+        print("remove scrollview kvo")
+        // 移除所有监听
+        scrollViewObservations.values.forEach { $0.invalidate() }
+        scrollViewObservations.removeAll()
     }
     
     // MARK: ScrollView Offset Management
@@ -526,71 +644,16 @@ extension VDDetailGestureCoordinator {
         clearScrollViewOffsets()
         for scrollView in scrollViews {
             let key = scrollView.hashValue
-            print("sgx >> safe \(key), offsety:\(scrollView.contentOffset.y)")
             scrollViewOffsetMap[key] = ceil(scrollView.contentOffset.y)
-        }
-    }
-
-    /**
-     * 恢复所有ScrollView到保存的偏移量
-     */
-    private func restoreScrollViewOffsets() {
-        guard let scrollViews = observedViews.allObjects as? [UIScrollView] else { return }
-        
-        for scrollView in scrollViews {
-            let key = scrollView.hashValue
-            if let savedOffset = scrollViewOffsetMap[key] {
-                print("sgx >> restore \(key), offsety:\(savedOffset) currentoffset:\(scrollView.contentOffset.y)")
-                scrollView.contentOffset.y = savedOffset
-                
-//                if !self.childKeyValueObservations.keys.contains(key) {
-//                    let keyValueObservation = scrollView.observe(\.contentOffset, options: [.initial, .new, .old]) { [weak self] (scrollView, change) in
-//                        guard let self = self else {
-//                            return
-//                        }
-//                        
-//                        guard let newValue = change.newValue else {
-//                            return
-//                        }
-//                        
-//                        guard let oldValue = change.oldValue else {
-//                            return
-//                        }
-//                        
-//                        if abs(newValue.y - oldValue.y) < 0.1 {
-//                            return
-//                        }
-//                        let key = scrollView.hashValue
-//                        if let savedOffset = self.scrollViewOffsetMap[key] {
-//                            scrollView.contentOffset.y = savedOffset
-//                        }
-//                    }
-//                    self.childKeyValueObservations[key] = keyValueObservation
-//                }
-            }
         }
     }
     
     /**
      * 清除保存的偏移量映射表
+     * ✅ 改为public，供外部在动画完成后调用
      */
-    private func clearScrollViewOffsets() {
+    func clearScrollViewOffsets() {
         scrollViewOffsetMap.removeAll()
-        
-//        let observations = childKeyValueObservations
-//        observations.values.forEach({ $0.invalidate() })
-//        childKeyValueObservations.removeAll()
-    }
-    
-    /**
-     * 保持所有ScrollView在顶部位置
-     */
-    private func keepScrollViewsAtTop() {
-        guard let scrollViews = observedViews.allObjects as? [UIScrollView] else { return }
-        
-        for scrollView in scrollViews {
-            scrollView.contentOffset.y = -scrollView.contentInset.top
-        }
     }
     
     /** 向下滑动时，是否滑到顶部边界了
@@ -610,19 +673,21 @@ extension VDDetailGestureCoordinator {
         }
         return true
     }
-    
-    private func isAllScrollViewsSafe() -> Bool {
+
+    // 是否有scrollview超出了顶部offset
+    private func hasScrollViewsBeyondTop() -> Bool {
         for object in observedViews.allObjects {
             if let scrollView = object as? UIScrollView,
                !scrollView.isHidden,
                scrollView.alpha > 0,
                scrollView.superview != nil {
                 if scrollView.contentOffset.y < -scrollView.contentInset.top {
-                    return false
+                    print("has scrollview beyond:\(scrollView.contentOffset.y)")
+                    return true
                 }
             }
         }
-        return true
+        return false
     }
 }
 
@@ -657,13 +722,13 @@ extension VDDetailGestureCoordinator: UIGestureRecognizerDelegate {
 //        print("sgx >> gesture recognizer: \(otherGestureRecognizer.view) is scrollView \(otherGestureRecognizer.view as? UIScrollView)")
         // 1. 排除自身手势冲突
         if otherGestureRecognizer.view == self {
-            print("sgx >> gesture recognizer: false1")
+            //print("sgx >> gesture recognizer: false1")
             return false
         }
         
         // 2. 确保当前手势是平移手势
         guard let panGesture = gestureRecognizer as? UIPanGestureRecognizer else {
-            print("sgx >> gesture recognizer: false2")
+            //print("sgx >> gesture recognizer: false2")
             return false
         }
         
@@ -671,19 +736,19 @@ extension VDDetailGestureCoordinator: UIGestureRecognizerDelegate {
         let velocity = panGesture.velocity(in: panGesture.view?.superview)
         if abs(velocity.x) > abs(velocity.y) {
             // 水平方向滑动优先级更高，不允许同时识别
-            print("sgx >> gesture recognizer: false3")
+            //print("sgx >> gesture recognizer: false3")
             return false
         }
         
         // 4. 确保另一个手势的view是ScrollView
         guard let scrollView = otherGestureRecognizer.view as? UIScrollView else {
-            print("sgx >> gesture recognizer: false4")
+            //print("sgx >> gesture recognizer: false4")
             return false
         }
         
         // 5. 排除复杂的滚动组件
         if isComplexScrollComponent(scrollView, otherGestureRecognizer: otherGestureRecognizer) {
-            print("sgx >> gesture recognizer: false5")
+            //print("sgx >> gesture recognizer: false5")
             return false
         }
         //print("sgx >> gesture recognizer: true:\(otherGestureRecognizer.view)")

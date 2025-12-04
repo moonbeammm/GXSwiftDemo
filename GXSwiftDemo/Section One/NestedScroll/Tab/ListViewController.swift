@@ -19,7 +19,7 @@ class ListViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 0
-        layout.itemSize = CGSize(width: view.frame.width, height: 80)
+        layout.itemSize = CGSize(width: view.frame.width, height: 78)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(NestedCell.self, forCellWithReuseIdentifier: "cell")
@@ -104,6 +104,6 @@ extension ListViewController: UICollectionViewDataSource, UICollectionViewDelega
 }
 extension ListViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("sgx >> scroll view did scroll \(scrollView.contentOffset.y) \(scrollView.contentInset.top)")
+        //print("sgx >> scroll view did scroll \(scrollView.contentOffset.y) \(scrollView.contentInset.top)")
     }
 }

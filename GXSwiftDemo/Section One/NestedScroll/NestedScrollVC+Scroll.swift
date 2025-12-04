@@ -226,7 +226,7 @@ extension VDDetailContainerBlocV3 {
             // VKLogInfo(.common, .layout, "tab container约束无变更，丢弃此次更新")
             return false
         }
-        print("sgx >>>>> height \(heightDiff) \(topMargin)")
+//        print("sgx >>>>> height \(heightDiff) \(topMargin)")
         tabContainerVC.view.topConstraint?.constant = topMargin
         // 没用用底部约束的原因是转屏全屏时高度会变成0
         tabContainerVC.view.heightConstraint?.constant = -heightDiff
@@ -248,7 +248,7 @@ extension VDDetailContainerBlocV3 {
 
     /// 简介tab能否向下拉超出播放器最大高度
     func draggingDownEnable() -> Bool {
-        guard MockInfo.canDragging else {
+        guard MockInfo.ff.canDraggingToStory else {
             return false
         }
         return true
@@ -395,6 +395,7 @@ extension VDDetailContainerBlocV3 {
         playerVC.view.addSubview(blackBar)
         contentVC.view.addSubview(tabContainerVC.view)
 
+
         playerVC.view.translatesAutoresizingMaskIntoConstraints = false
         playerVC.view.topAnchor.constraint(equalTo: contentVC.view.topAnchor, constant: Constant.safeAreaTop).isActive = true
         playerVC.view.leftAnchor.constraint(equalTo: contentVC.view.leftAnchor).isActive = true
@@ -411,6 +412,9 @@ extension VDDetailContainerBlocV3 {
         tabContainerVC.view.leftAnchor.constraint(equalTo: contentVC.view.leftAnchor).isActive = true
         tabContainerVC.view.widthAnchor.constraint(equalToConstant: Constant.SCREEN_WIDTH).isActive = true
         tabContainerVC.view.heightAnchor.constraint(equalTo: contentVC.view.heightAnchor).isActive = true
+
+        
+
     }
 }
 
