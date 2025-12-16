@@ -117,11 +117,11 @@ class VDDetailContainerBlocV3: UIViewController {
             self?.onPanGestureEndScroll(offset, velocity: velocity)
         }
         // ✅ 设置触发回调
-        t.onReachMaxOffsetWhileScrollingUp = { [weak self] in
-            return self?.handleReachMaxWhileScrollingUp() ?? false
+        t.onReachMaxOffsetWhileScrollingUp = { [weak self] velocity in
+            return self?.handleReachMaxWhileScrollingUp(velocity) ?? false
         }
-        t.onReachMaxOffsetWhileScrollingDown = { [weak self] in
-            return self?.handleReachMaxWhileScrollingDown() ?? false
+        t.onReachMaxOffsetWhileScrollingDown = { [weak self] velocity in
+            return self?.handleReachMaxWhileScrollingDown(velocity) ?? false
         }
         return t
     }()
@@ -232,7 +232,7 @@ class VDDetailContainerBlocV3: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.isHidden = true
+//        navigationController?.navigationBar.isHidden = true
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -240,7 +240,7 @@ class VDDetailContainerBlocV3: UIViewController {
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        navigationController?.navigationBar.isHidden = false
+//        navigationController?.navigationBar.isHidden = false
     }
     override public var shouldAutorotate: Bool {
         if bfc_forceRotate == true {
@@ -409,7 +409,7 @@ extension VDDetailContainerBlocV3 {
 extension VDDetailContainerBlocV3 {
 
     /// ✅ 向上滑动到达临界点的处理
-    private func handleReachMaxWhileScrollingUp() -> Bool {
+    private func handleReachMaxWhileScrollingUp(_ velocity: CGFloat) -> Bool {
         guard let extraTabView = tabContainerBloc.extraTabView else {
             return false  // 没有ExtraTab，不拦截
         }
@@ -417,7 +417,7 @@ extension VDDetailContainerBlocV3 {
         switch extraTabState {
         case .expanded:
             // 触发收起动画
-            collapseExtraTab()
+            collapseExtraTab(velocity)
             return true  // 拦截，动画期间禁止ScrollView滚动
 
         case .collapsing:
@@ -435,7 +435,7 @@ extension VDDetailContainerBlocV3 {
     }
 
     /// ✅ 向下滑动到达临界点的处理
-    private func handleReachMaxWhileScrollingDown() -> Bool {
+    private func handleReachMaxWhileScrollingDown(_ velocity: CGFloat) -> Bool {
         guard let extraTabView = tabContainerBloc.extraTabView else {
             return false
         }
@@ -443,7 +443,7 @@ extension VDDetailContainerBlocV3 {
         switch extraTabState {
         case .collapsed:
             // 触发展开动画
-            expandExtraTab()
+            expandExtraTab(velocity)
             return true  // 拦截，动画期间禁止播放器展开
 
         case .expanding:
@@ -461,21 +461,21 @@ extension VDDetailContainerBlocV3 {
     }
 
     /// ✅ 收起ExtraTab动画
-    private func collapseExtraTab() {
+    private func collapseExtraTab(_ velocity: CGFloat) {
         guard let extraTabView = tabContainerBloc.extraTabView else { return }
 
         extraTabState = .collapsing
         extraTabView.collapse()
 
         let extraTabHeight = extraTabView.frame.height
-        let duration: TimeInterval = 0.25
+        let duration: TimeInterval = calculateDurationV3(velocity: velocity)
 
         UIView.animate(withDuration: duration) {
             print("收起 animation")
             // ExtraTabView向上移动
-            extraTabView.transform = CGAffineTransform(translationX: 0, y: -(extraTabHeight/2.0))
+            extraTabView.transform = CGAffineTransform(translationX: 0, y: -extraTabHeight)
             // ✅ Container也向上移动，消除断层
-            self.tabContainerVC.bfc_updateContainerTopMargin(extraTabHeight/2.0, animated: false)
+            self.tabContainerVC.bfc_updateContainerTopMargin(0, animated: false)
         } completion: { [weak self] finished in
             guard let self = self else { return }
             self.extraTabState = .collapsed
@@ -484,14 +484,14 @@ extension VDDetailContainerBlocV3 {
     }
 
     /// ✅ 展开ExtraTab动画
-    private func expandExtraTab() {
+    private func expandExtraTab(_ velocity: CGFloat) {
         guard let extraTabView = tabContainerBloc.extraTabView else { return }
 
         extraTabState = .expanding
         extraTabView.expand()
 
         let extraTabHeight = extraTabView.frame.height
-        let duration: TimeInterval = 0.25
+        let duration: TimeInterval = calculateDurationV3(velocity: velocity)
 
         // 3. 执行动画：ExtraTabView向下移动 + Container向下移动
         UIView.animate(withDuration: duration) {
@@ -503,5 +503,26 @@ extension VDDetailContainerBlocV3 {
             guard let self = self else { return }
             self.extraTabState = .expanded
         }
+    }
+    
+    private func calculateDurationV3(velocity v: CGFloat) -> CGFloat {
+        // 1. 取绝对值
+        let absVelocity = abs(v)
+
+        // 2. 定义速度范围
+        let minVelocity: CGFloat = 100   // 慢速阈值（点/秒）
+        let maxVelocity: CGFloat = 2000  // 快速阈值（点/秒）
+
+        // 3. 归一化到0-1范围
+        let normalizedVelocity = min(max((absVelocity - minVelocity) / (maxVelocity - minVelocity), 0), 1)
+
+        // 4. 映射到duration范围（速度越快，duration越短）
+        let minDuration: CGFloat = 0.0  // 最短时长（快速滑动）
+        let maxDuration: CGFloat = 0.3   // 最长时长（慢速滑动）
+        let duration = maxDuration - (normalizedVelocity * (maxDuration - minDuration))
+        
+        print("sgx >>> velocity:\(v) duration:\(duration)")
+
+        return duration
     }
 }

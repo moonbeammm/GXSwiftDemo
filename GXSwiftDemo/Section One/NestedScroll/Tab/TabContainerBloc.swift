@@ -100,11 +100,11 @@ class CustomExtraTabView: UIView {
 
     /// 切换为收起状态（左右排列）
     func collapse(animated: Bool = true) {
-        guard currentMode != .horizontal else { return }
-        currentMode = .horizontal
-
-        NSLayoutConstraint.deactivate(verticalConstraints)
-        NSLayoutConstraint.activate(horizontalConstraints)
+//        guard currentMode != .horizontal else { return }
+//        currentMode = .horizontal
+//
+//        NSLayoutConstraint.deactivate(verticalConstraints)
+//        NSLayoutConstraint.activate(horizontalConstraints)
 
 //        if animated {
 //            UIView.animate(withDuration: 0.25) {
@@ -117,11 +117,11 @@ class CustomExtraTabView: UIView {
 
     /// 切换为展开状态（上下排列）
     func expand(animated: Bool = true) {
-        guard currentMode != .vertical else { return }
-        currentMode = .vertical
-
-        NSLayoutConstraint.deactivate(horizontalConstraints)
-        NSLayoutConstraint.activate(verticalConstraints)
+//        guard currentMode != .vertical else { return }
+//        currentMode = .vertical
+//
+//        NSLayoutConstraint.deactivate(horizontalConstraints)
+//        NSLayoutConstraint.activate(verticalConstraints)
 
 //        if animated {
 //            UIView.animate(withDuration: 0.25) {

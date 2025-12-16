@@ -144,11 +144,11 @@ class VDDetailGestureCoordinator: NSObject {
     var enableReachMaxOffset: Bool = true
     /// ✅ 向上滑动到达最大offset时的回调（用于触发ExtraTab收起）
     /// - Returns: 是否拦截后续滚动（true=拦截，false=不拦截）
-    var onReachMaxOffsetWhileScrollingUp: (() -> Bool)?
+    var onReachMaxOffsetWhileScrollingUp: ((_ velocity: CGFloat) -> Bool)?
 
     /// ✅ 向下滑动到达最大offset时的回调（用于触发ExtraTab展开）
     /// - Returns: 是否拦截后续滚动（true=拦截，false=不拦截）
-    var onReachMaxOffsetWhileScrollingDown: (() -> Bool)?
+    var onReachMaxOffsetWhileScrollingDown: ((_ velocity: CGFloat) -> Bool)?
 
     internal var childKeyValueObservations: [Int: NSKeyValueObservation] = [:]
     // MARK: - Initialization
@@ -283,7 +283,7 @@ extension VDDetailGestureCoordinator {
      * @param direction 滚动方向
      * @param source 滚动来源（用户手势/惯性动画）
      */
-    private func coordinateScrolling(targetOffset: CGFloat, direction: ScrollDirection, source: ScrollSource, velocity: CGFloat? = nil) {
+    private func coordinateScrolling(targetOffset: CGFloat, direction: ScrollDirection, source: ScrollSource, velocity: CGFloat) {
         switch direction {
         case .up:
             handleUpwardScrolling(targetOffset: targetOffset, source: source, velocity: velocity)
@@ -298,7 +298,7 @@ extension VDDetailGestureCoordinator {
      * 处理向上滑动逻辑
      * 策略：优先调整容器偏移量，到达边界后允许ScrollView滚动或触发ExtraTab收起
      */
-    private func handleUpwardScrolling(targetOffset: CGFloat, source: ScrollSource, velocity: CGFloat?) {
+    private func handleUpwardScrolling(targetOffset: CGFloat, source: ScrollSource, velocity: CGFloat) {
         // 启用bounces管理，向上滑动时则恢复ScrollView的bounce效果，防止上拉加载更多的功能失效
         if shouldManageScrollViewBounces {
             recoverScrollViewBounces()
@@ -323,7 +323,7 @@ extension VDDetailGestureCoordinator {
         
         if enableReachMaxOffset {
             // 阶段二：业务方定义区域滚动
-            let shouldIntercept = onReachMaxOffsetWhileScrollingUp?() ?? false
+            let shouldIntercept = onReachMaxOffsetWhileScrollingUp?(velocity) ?? false
             
             // 阶段二还未完成则直接return
             guard !shouldIntercept else {
@@ -341,7 +341,7 @@ extension VDDetailGestureCoordinator {
      * 处理向下滑动逻辑
      * 策略：ScrollView在顶部时，先触发ExtraTab展开，再调整容器偏移量；否则优先滚动ScrollView
      */
-    private func handleDownwardScrolling(targetOffset: CGFloat, source: ScrollSource, velocity: CGFloat?) {
+    private func handleDownwardScrolling(targetOffset: CGFloat, source: ScrollSource, velocity: CGFloat) {
         // 启用bounces管理，向下滑动时则禁用ScrollView的bounce效果，防止下拉时出现空白
         if shouldManageScrollViewBounces {
             disableScrollViewBounces()
@@ -363,14 +363,15 @@ extension VDDetailGestureCoordinator {
         if enableReachMaxOffset {
             // 阶段二：优先展开offset -> 0
             if offset >= 0 {
-                updateContainerOffset(targetOffset)
+                let t = max(0, targetOffset)
+                updateContainerOffset(t)
             }
             // 阶段二还未完成则直接return
             guard offset <= 0 else {
                 return
             }
             // 阶段三：业务方定义区域滚动
-            let shouldIntercept = onReachMaxOffsetWhileScrollingDown?() ?? false
+            let shouldIntercept = onReachMaxOffsetWhileScrollingDown?(velocity) ?? false
             guard !shouldIntercept else {
                 return
             }
@@ -462,15 +463,15 @@ extension VDDetailGestureCoordinator {
             finishInertialAnimation("速度过低")
             return
         } else if reachedBoundary {
-            coordinateScrolling(targetOffset: targetOffset, direction: direction, source: .inertial)
+            coordinateScrolling(targetOffset: targetOffset, direction: direction, source: .inertial, velocity: inertialVelocity)
             if enableReachMaxOffset {
                 let isAllTop = isAllScrollViewsAtTop()
                 // 到达offset max or min边界，优先业务方自定义区域处理
                 var shouldIntercept: Bool = true
                 if direction == .down, isAllTop {
-                    shouldIntercept = onReachMaxOffsetWhileScrollingDown?() ?? false
+                    shouldIntercept = onReachMaxOffsetWhileScrollingDown?(inertialVelocity) ?? false
                 } else if direction == .up, isAllTop {
-                    shouldIntercept = onReachMaxOffsetWhileScrollingUp?() ?? false
+                    shouldIntercept = onReachMaxOffsetWhileScrollingUp?(inertialVelocity) ?? false
                 }
                 if !shouldIntercept {
                     // 被拦截，停止惯性动画
@@ -484,7 +485,7 @@ extension VDDetailGestureCoordinator {
         }
 
         // 4. 更新偏移量
-        coordinateScrolling(targetOffset: targetOffset, direction: direction, source: .inertial)
+        coordinateScrolling(targetOffset: targetOffset, direction: direction, source: .inertial, velocity: inertialVelocity)
     }
     
     /**

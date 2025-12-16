@@ -324,6 +324,17 @@ final class StringCountTests: XCTestCase {
         assert("https://www.baidu.com?a=345".bfc_appendParams(["a":"123"]) == "https://www.baidu.com?a=345")
         assert("https://www.baidu.com/?a=345".bfc_appendParams(["a":"123"]) == "https://www.baidu.com/?a=345")
     }
+    
+    func testDecode() throws {
+        let t = "哈哈%"
+        let t1 = t.removingPercentEncoding?.data(using: .utf8)
+        print("aaa===\(t1)")
+        
+        let a = "哈哈+#&="
+        let a1 = a.removingPercentEncoding?.data(using: .utf8)
+        print("aaa===\(a1)")
+    }
+    
 }
 extension Int {
     var readableString: String {
@@ -364,3 +375,5 @@ extension String {
         return urlComponents.url?.absoluteString ?? self
     }
 }
+
+
