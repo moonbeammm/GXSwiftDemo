@@ -65,37 +65,22 @@ class FeedPushTransitionAnimator: NSObject, UIViewControllerAnimatedTransitionin
 
         // 3. 创建白色背景容器（提供白色背景和圆角）
         let clipContainer = UIView()
-        
         clipContainer.frame = finalFrame
         clipContainer.center = originCenter
         clipContainer.transform = CGAffineTransform(scaleX: scaleWith, y: scaleHeight)
-        
         clipContainer.backgroundColor = .white
         clipContainer.layer.cornerRadius = AnimationConfig.cornerRadius
         clipContainer.clipsToBounds = true
         containerView.addSubview(clipContainer)
 
-        // 4. 创建卡片快照（直接添加到containerView）
+        // 4. 创建卡片快照
         let cardSnapshot = originCardView?.snapshotView(afterScreenUpdates: false) ?? UIView()
         cardSnapshot.frame = originFrame
-        cardSnapshot.center = originCenter
-        
-        cardSnapshot.backgroundColor = .systemGray5
-        
-        cardSnapshot.layer.cornerRadius = AnimationConfig.cornerRadius
-        cardSnapshot.clipsToBounds = true
         containerView.addSubview(cardSnapshot)
-
-        // 5. 设置详情页（frame为最终大小，transform缩小到卡片大小）
-        toView.frame = finalFrame
-        toView.center = originCenter
-        toView.transform = CGAffineTransform(scaleX: scaleWith, y: scaleHeight)
         
+        // 5. 设置详情页
         toView.alpha = 0.0
-        
-        toView.layer.cornerRadius = AnimationConfig.cornerRadius
-        toView.clipsToBounds = true
-        containerView.addSubview(toView)
+        clipContainer.addSubview(toView)
 
         // 隐藏原始卡片
         originCardView?.isHidden = true
@@ -134,20 +119,18 @@ class FeedPushTransitionAnimator: NSObject, UIViewControllerAnimatedTransitionin
         // 计算等比例缩放因子（基于宽度）
         let scale = finalFrame.width / originFrame.width
         let finalCenter = CGPoint(x: finalFrame.midX, y: finalFrame.midY)
-
+        let finalFrameHeight = finalFrame.height
+        let finalCardSnapshotHeight = finalFrame.width / (originFrame.width / originFrame.height)
+        
         UIView.animate(withDuration: AnimationConfig.duration) {
             dimView.alpha = AnimationConfig.dimAlpha
             
             clipContainer.transform = .identity
             clipContainer.center = finalCenter
 
-            // cardSnapshot等比例缩放（使用transform）
             cardSnapshot.transform = CGAffineTransform(scaleX: scale, y: scale)
-            cardSnapshot.center = finalCenter
-            
-            // detailView放大到原始大小（identity）
-            detailView.transform = .identity
-            detailView.center = finalCenter
+            cardSnapshot.center = CGPoint(x: finalCenter.x,
+                                          y: finalCenter.y - (finalFrameHeight - finalCardSnapshotHeight) / 2.0)
         }
     }
 
@@ -157,17 +140,17 @@ class FeedPushTransitionAnimator: NSObject, UIViewControllerAnimatedTransitionin
         completion: @escaping () -> Void
     ) {
         // 卡片淡出（前50%）
-        UIView.animate(withDuration: AnimationConfig.cardFadeOutDuration,
-                       delay: AnimationConfig.cardFadeOutDuration * 0.3,
+        UIView.animate(withDuration: AnimationConfig.duration * 0.5,
+                       delay: AnimationConfig.duration * 0.2,
                        options: .curveEaseOut) {
             cardSnapshot.alpha = 0
         }
 
         // 详情页淡入（整个动画时长）
         UIView.animate(withDuration: AnimationConfig.duration,
-                       delay: AnimationConfig.duration * 0.3,
-                       options: .curveEaseOut) {
-            detailView.alpha = 1
+                       delay: 0,
+                       options: .curveEaseIn) {
+            detailView.alpha = 1.0
         } completion: { _ in
             completion()
         }
